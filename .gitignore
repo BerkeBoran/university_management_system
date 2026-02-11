@@ -1,0 +1,14 @@
+# Sanal Ortam (Kesinlikle gitmemeli)
+.venv/
+venv/
+
+# Python Önbelleği
+__pycache__/
+*.py[cod]
+
+# PyCharm Ayarları
+.idea/
+
+# Çevresel Değişkenler ve DB (Güvenlik için gitmemeli)
+.env
+db.sqlite3
