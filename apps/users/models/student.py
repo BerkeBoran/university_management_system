@@ -14,7 +14,7 @@ class Student(User):
 
             date_str = timezone.now().strftime('%Y%m%d')
             student_count = Student.objects.count()+1
-            self.username = f"{date_str}-{student_count:02d}"
+            self.username = f"{date_str}{student_count:02d}"
 
             alphabet = string.ascii_letters + string.digits
             temp_password = "".join(secrets.choice(alphabet) for i in range(8))

@@ -29,5 +29,11 @@ class Instructor(User):
             alphabet = string.ascii_letters + string.digits
             temp_password = "".join(secrets.choice(alphabet) for i in range(8))
             self.set_password(temp_password)
-            
+
+            print(f"\n" + "=" * 30)
+            print(f"YENİ Akademisyen KAYDI")
+            print(f"Kullanıcı Adı: {self.username}")
+            print(f"Geçici Şifre:  {temp_password}")
+            print("=" * 30 + "\n")
+
         super().save(*args, **kwargs)
