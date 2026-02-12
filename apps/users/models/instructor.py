@@ -23,8 +23,14 @@ class Instructor(User):
             self.role = User.Role.INSTRUCTOR
             first_name_clean = self.first_name.lower().replace(" ", "_")
             last_name_clean = self.last_name.lower().replace(" ", "_")
-
-            self.username = f"{first_name_clean}_{last_name_clean}"
+            base_username = f"{first_name_clean} {last_name_clean}"
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+            username = username.lower().replace(" ", "_")
+            self.username = username
 
             alphabet = string.ascii_letters + string.digits
             temp_password = "".join(secrets.choice(alphabet) for i in range(8))
@@ -34,6 +40,7 @@ class Instructor(User):
             print(f"YENİ Akademisyen KAYDI")
             print(f"Kullanıcı Adı: {self.username}")
             print(f"Geçici Şifre:  {temp_password}")
+            print(f"Ünvan: {self.title}")
             print("=" * 30 + "\n")
 
         super().save(*args, **kwargs)

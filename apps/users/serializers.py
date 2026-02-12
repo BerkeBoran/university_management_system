@@ -9,8 +9,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['full_name'] = f"{user.first_name} {user.last_name}"
 
-        if hasattr(user, 'Instructor'):
-            token['title'] = user.Instructor.get_title_display()
+        if hasattr(user.role, 'INSTRUCTOR'):
+            token['title'] = user.instructor.get_title_display()
 
 
 
@@ -23,8 +23,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username
         data['full_name'] = f"{self.user.first_name} {self.user.last_name}"
         data['role'] = self.user.role
-        if hasattr(self.user, 'Instructor'):
-            data['title'] = self.user.Instructor.get_title_display()
+        if self.user.role == 'Instructor':
+            data['title'] = self.user.instructor.get_title_display()
         else:
             data['title'] = None
 
