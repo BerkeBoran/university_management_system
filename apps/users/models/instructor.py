@@ -6,7 +6,7 @@ class Instructor(User):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.role = User.Role.Instructor
+            self.role = User.Role.INSTRUCTOR
             first_name_clean = self.first_name.lower().replace(" ", "_")
             last_name_clean = self.last_name.lower().replace(" ", "_")
 
