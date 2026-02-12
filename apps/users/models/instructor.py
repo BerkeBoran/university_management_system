@@ -1,9 +1,23 @@
+import secrets
+import string
+
 from django.db import models
 from .base import User
 
 class Instructor(User):
-    title = models.CharField(max_length=120)
+    class Title(models.TextChoices):
+        PROFESSOR = "PROF", "Profesör"
+        ASSOC_PROF = "ASSOC_PROF", "Doçent"
+        ASST_PROF = "ASST_PROF", "Dr. Öğr. Üyesi"
+        LECTURER = "LECT", "Öğretim Görevlisi"
+        RESEARCH_ASST = "RA", "Araştırma Görevlisi"
 
+    title = models.CharField(
+        max_length=10,
+        choices=Title.choices,
+        default=Title.LECTURER,
+        verbose_name="Ünvan"
+    )
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = User.Role.INSTRUCTOR
@@ -11,5 +25,9 @@ class Instructor(User):
             last_name_clean = self.last_name.lower().replace(" ", "_")
 
             self.username = f"{first_name_clean}_{last_name_clean}"
+
+            alphabet = string.ascii_letters + string.digits
+            temp_password = "".join(secrets.choice(alphabet) for i in range(8))
+            self.set_password(temp_password)
             
         super().save(*args, **kwargs)
