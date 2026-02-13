@@ -21,12 +21,17 @@ const LoginPage = () => {
         alert("Giriş Başarılı!");
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user_role', role )
-        if (role == 'student') navigate('/StudentDashboard')
+        if (role === 'student') navigate('/StudentDashboard')
         else navigate('/InstructorDashboard')
       }
     } catch (error) {
-      alert("Hatalı kullanıcı adı veya şifre!");
-      console.error("Login hatası:", error);
+      const code= error.response?.data?.code;
+      if (code === "invalid_role") {
+        alert("Seçtiğiniz rol ile hesabınız eşleşmiyor!");
+      } else {
+        alert("Kullanıcı adı veya şifre hatalı.");
+      }
+      console.error("Login Hatası:", error.response?.data)
     }
   };
 
@@ -35,7 +40,6 @@ const LoginPage = () => {
       <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Üniversite Sistemi</h2>
 
-        {/* Seçim Sekmeleri */}
         <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setRole('student')}
