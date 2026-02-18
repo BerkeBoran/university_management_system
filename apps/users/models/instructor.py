@@ -24,9 +24,10 @@ class Instructor(User):
             first_name_clean = self.first_name.lower().replace(" ", "_")
             last_name_clean = self.last_name.lower().replace(" ", "_")
             base_username = f"{first_name_clean} {last_name_clean}"
+            base_username = base_username.lower().replace(" ", "_")
             username = base_username
             counter = 1
-            while User.objects.filter(username=username).exists():
+            while User.objects.filter(username = username).exists():
                 username = f"{base_username}_{counter}"
                 counter += 1
             username = username.lower().replace(" ", "_")
