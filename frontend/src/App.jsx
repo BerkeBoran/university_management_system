@@ -7,10 +7,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<LoginPage />} />
 
-        {/* Login Sayfası */}
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login/:role" element={<LoginPage />} />
         <Route path="/InstructorDashboard"  element={<InstructorDashboard/>} />
         <Route path="/StudentDashboard"  element={<StudentDashboard/>} />
 
