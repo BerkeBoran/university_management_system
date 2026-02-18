@@ -1,121 +1,102 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from "axios";
 
 const StudentDashboard = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const fullName = localStorage.getItem('full_name') || "Berke Boran"; // Örnek isim
+  const fullName = localStorage.getItem('full_name')
+  const token = localStorage.getItem('token')
+  const [loading, setLoading] = useState(true)
+  const [studentData, setStudentData] = useState(null);
 
-  // Örnek Ders Programı Verisi
-  const schedule = [
-    { id: 1, name: "Veri Yapıları", day: "Pazartesi", time: "09:00 - 12:00", room: "Lab 2" },
-    { id: 2, name: "Web Programlama", day: "Salı", time: "13:00 - 16:00", room: "Derslik 101" },
-    { id: 3, name: "Nesne Yönelimli Programlama", day: "Çarşamba", time: "10:00 - 12:00", room: "Amfi 1" },
-  ];
+useEffect(() => {
+    const fetchProfile = async () => {
+      if (!token) {
+          console.error("Token bulunamadı!");
+          setLoading(false);
+          return;
+      }
 
+      try {
+        const res = await axios.get('http://localhost:8000/api/users/profile/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Veri çekme hatası:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [token]);
+
+if (loading) return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+  );
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Üst Bar */}
-      <header className="bg-white shadow-sm p-4 flex justify-between items-center relative z-50">
-        <div className="flex items-center gap-4">
-          {/* Açılır Menü Butonu */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
-          >
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <h1 className="text-xl font-bold text-blue-700">UniSystem</h1>
+    <div className="min-h-screen bg-gray-100 flex">
+      <aside className="w-64 bg-white shadow-md hidden md:block">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-blue-600">UniPort</h2>
         </div>
+        <nav className="mt-4">
+          <a href="#" className="block py-2.5 px-6 bg-blue-50 text-blue-700 border-r-4 border-blue-700 font-medium">Panelim</a>
+          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ders Seçimi</a>
+          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Notlarım</a>
+          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ayarlar</a>
+        </nav>
+      </aside>
 
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-700">{fullName}</span>
-          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-            {fullName.charAt(0)}
+      <main className="flex-1 p-8">
+        <header className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 mb-8 text-white shadow-lg">
+          <h1 className="text-3xl font-bold">Tekrar Hoş Geldin, {studentData?.first_name || fullName}! 👋</h1>
+          <p className="mt-2 text-blue-100">Bölüm: Bilgisayar Mühendisliği | Genel Not Ortalaman: <span className="font-bold text-white">{studentData?.gpa || "0.00"}</span></p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500 uppercase font-semibold">Kayıtlı Ders</p>
+            <p className="text-2xl font-bold text-gray-800">{studentData?.courses?.length || 0}</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500 uppercase font-semibold">Toplam AKTS</p>
+            <p className="text-2xl font-bold text-gray-800">
+                {studentData?.courses?.reduce((sum, c) => sum + (c.ects || 0), 0) || 0}
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500 uppercase font-semibold">Devamsızlık Durumu</p>
+            <p className="text-2xl font-bold text-green-600">%100 Katılım</p>
           </div>
         </div>
 
-        {/* Sol Üst Açılır Menü Content */}
-        {isMenuOpen && (
-          <div className="absolute top-16 left-4 w-64 bg-white shadow-xl rounded-xl border border-gray-100 p-2 animate-in fade-in slide-in-from-top-2">
-            <nav className="flex flex-col gap-1">
-              <button className="flex items-center gap-3 p-3 hover:bg-blue-50 text-blue-700 rounded-lg font-medium">
-                <span>🏠 Dashboard</span>
-              </button>
-              <button className="flex items-center gap-3 p-3 hover:bg-gray-50 text-gray-600 rounded-lg">
-                <span>📚 Ders Kaydı</span>
-              </button>
-              <button className="flex items-center gap-3 p-3 hover:bg-gray-50 text-gray-600 rounded-lg">
-                <span>📝 Notlarım</span>
-              </button>
-              <hr className="my-2" />
-              <button className="flex items-center gap-3 p-3 hover:bg-red-50 text-red-600 rounded-lg">
-                <span>🚪 Çıkış Yap</span>
-              </button>
-            </nav>
-          </div>
-        )}
-      </header>
-
-      {/* Ana İçerik */}
-      <main className="p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-        {/* Sol Kolon: Ders Programı */}
-        <div className="lg:col-span-2 space-y-6">
-          <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              📅 Haftalık Ders Programı
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-gray-500 text-sm border-b">
-                    <th className="pb-3">Gün</th>
-                    <th className="pb-3">Ders</th>
-                    <th className="pb-3">Saat</th>
-                    <th className="pb-3">Yer</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {schedule.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50 transition">
-                      <td className="py-4 font-semibold text-gray-700">{item.day}</td>
-                      <td className="py-4 text-blue-600 font-medium">{item.name}</td>
-                      <td className="py-4 text-gray-600">{item.time}</td>
-                      <td className="py-4"><span className="bg-gray-100 px-2 py-1 rounded text-xs">{item.room}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-
-        {/* Sağ Kolon: Hızlı Ders Kaydı */}
-        <div className="space-y-6">
-          <section className="bg-blue-600 p-6 rounded-2xl shadow-lg text-white">
-            <h2 className="text-lg font-bold mb-2">Ders Kaydı Aktif!</h2>
-            <p className="text-blue-100 text-sm mb-4">2025-2026 Bahar dönemi için ders seçiminizi yapabilirsiniz.</p>
-            <button className="w-full bg-white text-blue-600 font-bold py-3 rounded-xl hover:bg-blue-50 transition">
-              Ders Seçimine Git
-            </button>
-          </section>
-
-          <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wider">Duyurular</h3>
-            <div className="space-y-4">
-              <div className="border-l-4 border-yellow-400 pl-3">
-                <p className="text-sm font-medium">Vize sınav takvimi açıklandı.</p>
-                <span className="text-xs text-gray-400">2 saat önce</span>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Aktif Derslerim</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {studentData?.courses?.map((course) => (
+            <div key={course.id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border-l-4 border-blue-500">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{course.course_name}</h3>
+                  <p className="text-sm text-gray-500 mt-1">{course.course_id}</p>
+                </div>
+                <span className="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">
+                  {course.ects} AKTS
+                </span>
               </div>
-              <div className="border-l-4 border-green-400 pl-3">
-                <p className="text-sm font-medium">Staj başvuruları başladı.</p>
-                <span className="text-xs text-gray-400">Dün</span>
+              <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
+                <span>Kredi: {course.credit}</span>
+                <button className="text-blue-600 hover:underline font-medium">Detaylara Git</button>
               </div>
             </div>
-          </section>
+          ))}
+          {studentData?.courses?.length === 0 && (
+            <div className="col-span-full p-12 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl text-center text-gray-500">
+                Henüz ders seçimi yapmadınız.
+            </div>
+          )}
         </div>
-
       </main>
     </div>
   );

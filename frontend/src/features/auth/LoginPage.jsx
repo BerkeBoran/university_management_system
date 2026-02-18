@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Button from '../../components/ui/Button';
 
 const LoginPage = () => {
   const [role, setRole] = useState('student')
@@ -8,19 +9,21 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/users/login/', {
         username: username,
         password: password,
-        role: role
+        role: role,
       });
 
       if (response.status === 200) {
         alert("Giriş Başarılı!");
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user_role', role )
+        localStorage.setItem('full_name', response.data.full_name)
         if (role === 'student') navigate('/StudentDashboard')
         else navigate('/InstructorDashboard')
       }
@@ -34,8 +37,7 @@ const LoginPage = () => {
       console.error("Login Hatası:", error.response?.data)
     }
   };
-
- return (
+  return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Üniversite Sistemi</h2>
@@ -72,9 +74,13 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="w-full py-3 mt-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">
-             {role === 'student' ? 'Öğrenci Girişi' : 'Akademisyen Girişi'}
-          </button>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full mt-4"
+            >
+            Giriş Yap
+        </Button>
         </form>
       </div>
     </div>
