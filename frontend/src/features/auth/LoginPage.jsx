@@ -11,32 +11,44 @@ const LoginPage = () => {
 
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/users/login/', {
-        username: username,
-        password: password,
-        role: role,
-      });
+  e.preventDefault();
 
-      if (response.status === 200) {
-        alert("Giriş Başarılı!");
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user_role', role )
-        localStorage.setItem('full_name', response.data.full_name)
-        if (role === 'student') navigate('/StudentDashboard')
-        else navigate('/InstructorDashboard')
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/users/login/",
+      {
+        username,
+        password,
+        role,
       }
-    } catch (error) {
-      const code= error.response?.data?.code;
-      if (code === "invalid_role") {
-        alert("Seçtiğiniz rol ile hesabınız eşleşmiyor!");
-      } else {
-        alert("Kullanıcı adı veya şifre hatalı.");
-      }
-      console.error("Login Hatası:", error.response?.data)
+    );
+
+    localStorage.setItem("access", response.data.access);
+    localStorage.setItem("refresh", response.data.refresh);
+    localStorage.setItem("user_role", role);
+    localStorage.setItem("full_name", response.data.full_name);
+
+    alert("Giriş Başarılı!");
+
+    if (role === "student") {
+      navigate("/StudentDashboard");
+    } else {
+      navigate("/InstructorDashboard");
     }
-  };
+
+  } catch (error) {
+    console.error("TAM HATA:", error);
+
+    const code = error.response?.data?.code;
+
+    if (code === "invalid_role") {
+      alert("Seçtiğiniz rol ile hesabınız eşleşmiyor!");
+    } else {
+      alert("Kullanıcı adı veya şifre hatalı.");
+    }
+  }
+};
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">

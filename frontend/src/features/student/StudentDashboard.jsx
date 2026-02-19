@@ -1,34 +1,34 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import {Link} from "react-router-dom";
 
 const StudentDashboard = () => {
   const fullName = localStorage.getItem('full_name')
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('access')
   const [loading, setLoading] = useState(true)
   const [studentData, setStudentData] = useState(null);
 
 useEffect(() => {
-    const fetchProfile = async () => {
-      if (!token) {
-          console.error("Token bulunamadı!");
-          setLoading(false);
-          return;
-      }
+  if (!token) return;
 
-      try {
-        const res = await axios.get('http://localhost:8000/api/users/profile/', {
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8000/api/users/profile/",
+        {
           headers: { Authorization: `Bearer ${token}` }
-        });
-        setStudentData(res.data);
-      } catch (err) {
-        console.error("Veri çekme hatası:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+        }
+      );
+      setStudentData(res.data);
+    } catch (err) {
+      console.error("Veri çekme hatası:", err.response?.status);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchProfile();
-  }, [token]);
+  fetchProfile();
+}, [token]);
 
 if (loading) return (
     <div className="flex justify-center items-center h-screen">
@@ -42,10 +42,14 @@ if (loading) return (
           <h2 className="text-xl font-bold text-blue-600">UniPort</h2>
         </div>
         <nav className="mt-4">
-          <a href="#" className="block py-2.5 px-6 bg-blue-50 text-blue-700 border-r-4 border-blue-700 font-medium">Panelim</a>
-          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ders Seçimi</a>
-          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Notlarım</a>
-          <a href="#" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ayarlar</a>
+          <Link to="/dashboard" className="block py-2.5 px-6 bg-blue-50 text-blue-700 border-r-4 border-blue-700 font-medium"> Panelim
+          </Link>
+          <Link to="/CourseSelection" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition"> Ders Seçimi
+          </Link>
+          <Link to="/grades" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Notlarım
+          </Link>
+          <Link to="/settings" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ayarlar
+          </Link>
         </nav>
       </aside>
 
