@@ -1,4 +1,4 @@
-from apps.courses.models.course import Course
+from apps.courses.models.course import Course, Department, Grade
 from .base import User
 from django.db import models
 from django.utils import timezone
@@ -8,6 +8,9 @@ import string
 class Student(User):
     enrollment_date = models.DateField(auto_now_add=True)
     gpa = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    department = models.CharField(max_length=120, choices = Department.DepartmentChoices)
+    grade = models.IntegerField(default=1, choices = Grade.GradeChoices)
+
     courses = models.ManyToManyField(
         Course,
         related_name="students",
