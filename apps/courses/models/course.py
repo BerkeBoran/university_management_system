@@ -10,6 +10,8 @@ class Department(models.Model):
         (MATH, "MATH"),
     )
     department = models.TextField(choices = DepartmentChoices)
+    def __str__(self):
+        return f"{self.department}"
 
 class Grade(models.Model):
     FRESHMAN = 1
@@ -24,6 +26,8 @@ class Grade(models.Model):
         (SENIOR, "Senior"),
     )
     grade = models.IntegerField(choices = GradeChoices)
+    def __str__(self):
+        return f"{self.grade}"
 
 class Course(models.Model):
     course_id = models.CharField(max_length = 120, unique = True, verbose_name = "Ders Kodu")

@@ -1,5 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.users.models import Instructor
+
 from apps.courses.models.course import Course
 from .models.student import Student
 from rest_framework import serializers
@@ -46,9 +47,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    department_name = serializers.CharField(source='department.department', read_only=True)
     class Meta:
         model = Course
-        fields = ['id','course_id','course_name','ects','credit', 'grade',]
+        fields = ['id','course_id','course_name','ects','credit', 'grade', 'course_detail', 'department_name']
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     courses = CourseSerializer(many=True, read_only=True)

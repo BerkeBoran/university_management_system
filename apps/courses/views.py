@@ -11,8 +11,8 @@ class AvaliableCoursesView(generics.ListAPIView):
         if hasattr(user, 'student'):
             student = user.student
             return Course.objects.filter(
-                department__department=student.department,
-                grade__grade=student.grade
+                department__department = student.department,
+                grade__grade = student.grade
             )
 
         return Course.objects.none()

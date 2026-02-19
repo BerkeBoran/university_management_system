@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.serializers import MyTokenObtainPairSerializer, StudentProfileSerializer
 from apps.courses.models import Course
-from apps.courses.models.course import Grade, Department
+from apps.users.models import Student
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -15,12 +15,15 @@ class MyProfileView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = StudentProfileSerializer
 
-    def get_object(self):
-        return self.request.user
+    def get(self, request):
+        student = Student.objects.prefetch_related('courses').get(id = request.user.id)
+        serializer = StudentProfileSerializer(student)
+        return Response(serializer.data)
 
 
 class EnrollCourseView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
         course_id = request.data.get('course_id')
         user = request.user
