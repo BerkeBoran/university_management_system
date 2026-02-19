@@ -12,10 +12,10 @@ class Department(models.Model):
     department = models.TextField(choices = DepartmentChoices)
 
 class Grade(models.Model):
-    FRESHMAN = "1"
-    SOPHOMORE = "2"
-    JUNIOR = "3"
-    SENIOR = "4"
+    FRESHMAN = 1
+    SOPHOMORE = 2
+    JUNIOR = 3
+    SENIOR = 4
 
     GradeChoices = (
         (FRESHMAN, "Freshman"),
@@ -35,6 +35,10 @@ class Course(models.Model):
     capacity = models.IntegerField(default = 50, verbose_name = "Dersin Kontenjanı")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,
+        blank=True,related_name = "courses")
+    grade = models.ForeignKey(Grade,on_delete=models.CASCADE,null=True,
+        blank=True,related_name = "courses")
 
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"

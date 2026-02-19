@@ -1,9 +1,11 @@
 from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.serializers import MyTokenObtainPairSerializer, StudentProfileSerializer
 from apps.courses.models import Course
+from apps.courses.models.course import Grade, Department
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -18,16 +20,28 @@ class MyProfileView(generics.RetrieveAPIView):
 
 
 class EnrollCourseView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         course_id = request.data.get('course_id')
-        student = request.user
+        user = request.user
 
+        if not hasattr(user, 'student'):
+            return Response({"error": "Sadece öğrenci hesabı ile ders seçimi yapılabilir."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        student = user.student
         try:
             course = Course.objects.get(id = course_id)
-            if course.Department != student.Department or course.Grade != student.Grade:
-                return Response({"error": "Bu ders sizin sınıfınıza/bölümünüze uygun değil."}, status = status.HTTP_403_FORBIDDEN)
+            if course.department.department != student.department:
+                return Response({"error": "Bu ders sizin bölümünüze uygun değil."}, status = status.HTTP_403_FORBIDDEN)
 
-            student.Course.add(course)
+            if course.grade.grade != student.grade:
+                return Response({"error": "Bu ders sizin sınıfınıza uygun değil."}, status = status.HTTP_403_FORBIDDEN)
+
+            if student.courses.filter(id=course.id).exists():
+                return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
+
+            student.courses.add(course)
             return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)
 
         except Course.DoesNotExist:

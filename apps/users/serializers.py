@@ -48,10 +48,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id','course_id','course_name','ects','credit', 'grade', 'department']
+        fields = ['id','course_id','course_name','ects','credit', 'grade',]
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     courses = CourseSerializer(many=True, read_only=True)
     class Meta:
         model = Student
-        fields = ['id','username','first_name','last_name','gpa','courses','grade','department']
+        fields = ['id','username','first_name','last_name','gpa','courses',]

@@ -8,4 +8,11 @@ class AvaliableCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
     def get_queryset(self):
         user = self.request.user
-        return Course.objects.filter(Department = user.Department, Grade = user.Grade)
+        if hasattr(user, 'student'):
+            student = user.student
+            return Course.objects.filter(
+                department__department=student.department,
+                grade__grade=student.grade
+            )
+
+        return Course.objects.none()
