@@ -55,21 +55,21 @@ const CourseSelection = () => {
                         <div className="p-6">
                             <div className="flex justify-between items-start mb-4">
                                 <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    {course.department || 'Genel'}
+                                    {course.department_name || 'Genel'}
                                 </span>
                                 <span className="text-gray-500 text-sm font-medium">
                                     {course.ects} ECTS
                                 </span>
                             </div>
 
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{course.name}</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{course.course_name}</h3>
                             <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                {course.description || "Bu ders için açıklama bulunmuyor."}
+                                {course.course_detail || "Bu ders için açıklama bulunmuyor."}
                             </p>
 
                             <div className="flex items-center justify-between mt-6">
                                 <div className="text-sm text-gray-500">
-                                    Kod: <span className="font-mono font-bold text-gray-700">{course.course_code}</span>
+                                    Kod: <span className="font-mono font-bold text-gray-700">{course.course_id}</span>
                                 </div>
 
                                 <button

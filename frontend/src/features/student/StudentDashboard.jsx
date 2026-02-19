@@ -55,7 +55,7 @@ if (loading) return (
 
       <main className="flex-1 p-8">
         <header className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 mb-8 text-white shadow-lg">
-          <h1 className="text-3xl font-bold">Tekrar Hoş Geldin, {studentData?.first_name || fullName}! 👋</h1>
+          <h1 className="text-3xl font-bold">Tekrar Hoş Geldin, {fullName}! 👋</h1>
           <p className="mt-2 text-blue-100">Bölüm: Bilgisayar Mühendisliği | Genel Not Ortalaman: <span className="font-bold text-white">{studentData?.gpa || "0.00"}</span></p>
         </header>
 
