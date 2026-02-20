@@ -1,10 +1,12 @@
 import secrets
 import string
-
 from django.db import models
 from .base import User
+from apps.courses.models.course import Department
+
 
 class Instructor(User):
+    department= models.CharField(choices= Department.DepartmentChoices,max_length=50,null=True,blank=True,)
     class Title(models.TextChoices):
         PROFESSOR = "PROF", "Profesör"
         ASSOC_PROF = "ASSOC_PROF", "Doçent"
