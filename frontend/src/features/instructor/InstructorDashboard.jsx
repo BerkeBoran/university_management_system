@@ -1,19 +1,35 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from "axios";
 
 const InstructorDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [instructorData, setInstructorData] = useState(false)
+    const token = localStorage.getItem('access')
 
-  const fullName = localStorage.getItem('full_name') || "Dr. Berke Boran";
-  const title = localStorage.getItem('title') || "Öğretim Görevlisi";
 
-  const myCourses = [
-    { id: 1, code: "CENG204", name: "Veri Yapıları", students: 42, semester: "Güz" },
-    { id: 2, code: "CENG101", name: "Bilgisayar Mühendisliğine Giriş", students: 120, semester: "Güz" },
-    { id: 3, code: "CENG405", name: "Dağıtık Sistemler", students: 25, semester: "Güz" },
-  ];
+  const fullName = localStorage.getItem('full_name');
+  const title = localStorage.getItem('title');
+useEffect(() => {
+  if (!token) return;
 
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8000/api/users/profile/",
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setInstructorData(res.data);
+    } catch (err) {
+      console.error("Veri çekme hatası:", err.response?.status);
+    }
+  };
+
+  fetchProfile();
+}, [token]);
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
@@ -28,7 +44,7 @@ const InstructorDashboard = () => {
             className="p-2 hover:bg-slate-700 rounded-lg transition"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="4 6h16M4 12h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex flex-col">
@@ -81,7 +97,7 @@ const InstructorDashboard = () => {
         </div>
 
         <div className="grid gap-4">
-          {myCourses.map(course => (
+          {instructorData?.courses?.map(course => (
             <div key={course.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-blue-400 transition-colors group">
               <div className="flex gap-4 items-center">
                 <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
@@ -92,7 +108,7 @@ const InstructorDashboard = () => {
                     <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{course.code}</span>
                     <span className="text-xs font-medium text-slate-400">{course.semester} Dönemi</span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800">{course.name}</h3>
+                  <h3 className="text-xl font-bold text-slate-800">{course.course_name}</h3>
                 </div>
               </div>
 

@@ -58,7 +58,10 @@ const CourseSelection = () => {
                                     {course.department_name || 'Genel'}
                                 </span>
                                 <span className="text-gray-500 text-sm font-medium">
-                                    {course.ects} ECTS
+                                    {course.ects} AKTS
+                                </span>
+                                 <span className="text-gray-500 text-sm font-medium">
+                                    {course.capacity} Kontenjan
                                 </span>
                             </div>
 
