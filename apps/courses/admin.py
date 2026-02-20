@@ -12,7 +12,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Semester)
 class SemesterAdmin(admin.ModelAdmin):
-    list_display = ("semester",)
+    list_display = ("semester","is_active")
 
 @admin.register(Course)
 class CoursesAdmin(admin.ModelAdmin):
