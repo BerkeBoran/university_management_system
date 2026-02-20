@@ -50,10 +50,16 @@ class CourseSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department', read_only=True)
     class Meta:
         model = Course
-        fields = ['id','course_id','course_name','ects','credit', 'grade', 'course_detail', 'department_name']
+        fields = ['id','course_id','course_name','ects','credit', 'grade', 'course_detail', 'department_name','capacity']
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     courses = CourseSerializer(many=True, read_only=True)
     class Meta:
         model = Student
         fields = ['id','username','first_name','last_name','gpa','courses',]
+
+class InstructorProfileSerializer(serializers.ModelSerializer):
+    courses = CourseSerializer(many=True, read_only=True)
+    class Meta:
+        model = Instructor
+        fields = ['id','username','first_name','last_name','courses','department']

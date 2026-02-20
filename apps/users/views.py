@@ -3,9 +3,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
-from apps.users.serializers import MyTokenObtainPairSerializer, StudentProfileSerializer
+from apps.users.serializers import MyTokenObtainPairSerializer, StudentProfileSerializer, InstructorProfileSerializer
 from apps.courses.models import Course
 from apps.users.models import Student
+from apps.users.models import Instructor
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -16,8 +17,12 @@ class MyProfileView(generics.RetrieveAPIView):
     serializer_class = StudentProfileSerializer
 
     def get(self, request):
-        student = Student.objects.prefetch_related('courses').get(id = request.user.id)
-        serializer = StudentProfileSerializer(student)
+        if hasattr(request.user, 'student'):
+            student = Student.objects.prefetch_related('courses').get(id = request.user.id)
+            serializer = StudentProfileSerializer(student)
+        if hasattr(request.user, 'instructor'):
+            instructor = Instructor.objects.prefetch_related('courses').get(id = request.user.id)
+            serializer = InstructorProfileSerializer(instructor)
         return Response(serializer.data)
 
 
