@@ -54,5 +54,10 @@ class Course(models.Model):
         blank=True,related_name = "courses")
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE,null=True,)
 
+    @property
+    def remaining_capacity(self):
+        enrolled_count = self.students.count()
+        return max(0, enrolled_count)
+
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
