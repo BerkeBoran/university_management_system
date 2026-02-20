@@ -40,6 +40,8 @@ class EnrollCourseView(APIView):
         student = user.student
         try:
             course = Course.objects.get(id = course_id)
+            if course.remaining_capacity == course.capacity:
+                return Response({"error" : "Dersin Kontenjanı dolmuştur."}, status = status.HTTP_403_FORBIDDEN)
             if course.department.department != student.department:
                 return Response({"error": "Bu ders sizin bölümünüze uygun değil."}, status = status.HTTP_403_FORBIDDEN)
 
