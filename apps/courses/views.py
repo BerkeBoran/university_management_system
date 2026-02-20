@@ -12,7 +12,8 @@ class AvaliableCoursesView(generics.ListAPIView):
             student = user.student
             return Course.objects.filter(
                 department__department = student.department,
-                grade__grade = student.grade
+                grade__grade = student.grade,
+                semester__is_active = True,
             )
 
         return Course.objects.none()
