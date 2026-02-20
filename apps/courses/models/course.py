@@ -1,11 +1,22 @@
 from django.db import models
-
+class Semester(models.Model):
+    Spring = "Spring"
+    Autumn = "Autumn"
+    Semester_Choices = (
+        (Spring, "Spring"),
+        (Autumn, "Autumn"),
+    )
+    semester = models.TextField(choices = Semester_Choices)
+    def __str__(self):
+        return f"{self.semester}"
 class Department(models.Model):
     CENG = "CENG"
     MATH = "MATH"
+    SWE = "SWE"
     DepartmentChoices = (
         (CENG, "CENG"),
         (MATH, "MATH"),
+        (SWE, "SWE"),
     )
     department = models.TextField(choices = DepartmentChoices)
     def __str__(self):
@@ -41,6 +52,7 @@ class Course(models.Model):
         blank=True,related_name = "courses")
     grade = models.ForeignKey(Grade,on_delete=models.CASCADE,null=True,
         blank=True,related_name = "courses")
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE,null=True,)
 
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
