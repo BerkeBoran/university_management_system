@@ -106,7 +106,7 @@ useEffect(() => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{course.code}</span>
-                    <span className="text-xs font-medium text-slate-400">{course.semester} Dönemi</span>
+                    <span className="text-xs font-medium text-slate-400">{course.semester_name} Dönemi</span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-800">{course.course_name}</h3>
                 </div>
@@ -114,7 +114,7 @@ useEffect(() => {
 
               <div className="flex items-center gap-6 w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0">
                 <div className="flex flex-col items-center px-4">
-                  <span className="text-2xl font-black text-slate-800">{course.students}</span>
+                  <span className="text-2xl font-black text-slate-800">{course.remaining_capacity}</span>
                   <span className="text-xs text-slate-400 font-bold uppercase">Öğrenci</span>
                 </div>
                 <div className="flex gap-2 flex-grow md:flex-grow-0">

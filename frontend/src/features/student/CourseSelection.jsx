@@ -61,7 +61,7 @@ const CourseSelection = () => {
                                     {course.ects} AKTS
                                 </span>
                                  <span className="text-gray-500 text-sm font-medium">
-                                    {course.capacity} Kontenjan
+                                    {course.remaining_capacity} / {course.capacity} Kontenjan
                                 </span>
                             </div>
 
