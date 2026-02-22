@@ -65,3 +65,17 @@ class InstructorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         fields = ['id','username','first_name','last_name','courses','department',]
+class EnrolledStudentSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    class Meta:
+        model = Student
+        fields = ['id','username','full_name']
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+class InstructorCourseSerializer(serializers.ModelSerializer):
+    students = EnrolledStudentSerializer(many = True, read_only = True)
+    class Meta:
+        model = Course
+        fields = ['id','capacity','course_name','students']
