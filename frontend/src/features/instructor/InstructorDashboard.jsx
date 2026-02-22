@@ -6,9 +6,7 @@ const InstructorDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [instructorData, setInstructorData] = useState(false)
-    const token = localStorage.getItem('access')
-
-
+  const token = localStorage.getItem('access')
   const fullName = localStorage.getItem('full_name');
   const title = localStorage.getItem('title');
 useEffect(() => {
@@ -106,7 +104,6 @@ useEffect(() => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{course.code}</span>
-                    <span className="text-xs font-medium text-slate-400">{course.semester_name} Dönemi</span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-800">{course.course_name}</h3>
                 </div>
@@ -118,7 +115,7 @@ useEffect(() => {
                   <span className="text-xs text-slate-400 font-bold uppercase">Öğrenci</span>
                 </div>
                 <div className="flex gap-2 flex-grow md:flex-grow-0">
-                  <button className="flex-1 md:flex-none px-4 py-2 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-slate-50 transition">
+                  <button onClick={() => navigate(`/instructor/course/${course.id}/students`)}>
                     Liste
                   </button>
                   <button className="flex-1 md:flex-none px-4 py-2 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition">

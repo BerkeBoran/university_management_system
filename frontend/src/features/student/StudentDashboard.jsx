@@ -70,10 +70,6 @@ if (loading) return (
                 {studentData?.courses?.reduce((sum, c) => sum + (c.ects || 0), 0) || 0}
             </p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 uppercase font-semibold">Devamsızlık Durumu</p>
-            <p className="text-2xl font-bold text-green-600">%100 Katılım</p>
-          </div>
         </div>
 
         <h2 className="text-xl font-bold text-gray-800 mb-4">Aktif Derslerim</h2>
