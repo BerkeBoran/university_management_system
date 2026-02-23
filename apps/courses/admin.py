@@ -1,5 +1,9 @@
 from django.contrib import admin
-from apps.courses.models.course import Course, Grade, Department, Semester
+from apps.courses.models.course import Course, Grade, Department, Semester, Classroom
+
+@admin.register(Classroom)
+class ClassroomAdmin(admin.ModelAdmin):
+    list_display = ("classroom_name", "classroom_capacity")
 
 @admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):
@@ -16,4 +20,4 @@ class SemesterAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CoursesAdmin(admin.ModelAdmin):
-    list_display = ("ects","capacity","instructor","credit","course_name","course_id","course_detail","department","grade","semester")
+    list_display = ("ects","capacity","instructor","credit","course_name","course_id","course_detail","department","grade","semester","classroom")

@@ -1,4 +1,11 @@
 from django.db import models
+
+class Classroom(models.Model):
+    classroom_name = models.CharField(max_length = 100)
+    classroom_capacity = models.PositiveIntegerField()
+    def __str__(self):
+        return f"{self.classroom_name}"
+
 class Semester(models.Model):
     year = models.IntegerField(default=2026)
     is_active = models.BooleanField(default = False, verbose_name = "Semester Status")
@@ -56,6 +63,7 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    classroom = models.ForeignKey(Classroom, on_delete = models.CASCADE, null = True, blank = True, related_name = "courses")
     instructor = models.ForeignKey('users.Instructor', on_delete = models.CASCADE, related_name = "courses",verbose_name = "Dersin Hocası",null = True,blank = True)
     department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True,related_name = "courses")
     grade = models.ForeignKey(Grade,on_delete=models.CASCADE,null=True,blank=True,related_name = "courses")
