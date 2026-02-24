@@ -1,5 +1,19 @@
 from django.db import models
 
+class CourseTime(models.Model):
+    Days = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+    ]
+    course_days = models.TextField(max_length=100, choices = Days)
+    course_start_time = models.TimeField(blank = True, null = True,)
+    course_end_time = models.TimeField(blank = True, null = True,)
+    def __str__(self):
+        return f"{self.course_days} - {self.course_start_time} - {self.course_end_time}"
+
 class Classroom(models.Model):
     classroom_name = models.CharField(max_length = 100)
     classroom_capacity = models.PositiveIntegerField()
@@ -63,6 +77,7 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    course_time = models.ForeignKey(CourseTime,on_delete=models.CASCADE,null = True,blank = True,related_name = "courses")
     classroom = models.ForeignKey(Classroom, on_delete = models.CASCADE, null = True, blank = True, related_name = "courses")
     instructor = models.ForeignKey('users.Instructor', on_delete = models.CASCADE, related_name = "courses",verbose_name = "Dersin Hocası",null = True,blank = True)
     department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True,related_name = "courses")
