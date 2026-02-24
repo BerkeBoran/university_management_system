@@ -48,6 +48,20 @@ class EnrollCourseView(APIView):
             if course.grade.grade != student.grade:
                 return Response({"error": "Bu ders sizin sınıfınıza uygun değil."}, status = status.HTTP_403_FORBIDDEN)
 
+            new_course_time = course.course_time
+            if not new_course_time:
+                return Response({"error: Dersin Saati Tanımlanmamış"}, status = status.HTTP_400_BAD_REQUEST)
+
+            current_courses = student.courses.all()
+
+            for current_course in current_courses:
+                current_time = current_course.course_time
+
+                if current_time:
+                    if current_time.course_days == new_course_time.course_days:
+                        if (current_time.course_start_time < new_course_time.course_end_time) and  (current_time.course_end_time > new_course_time.course_start_time):
+                            return Response({"error: Saat Çakışması"}, status = status.HTTP_400_BAD_REQUEST)
+
             if student.courses.filter(id=course.id).exists():
                 return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
 
