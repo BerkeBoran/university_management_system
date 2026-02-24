@@ -40,3 +40,26 @@
 .read-the-docs {
   color: #888;
 }
+.calendar-grid {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 20px;
+}
+
+.calendar-day-column {
+  flex: 1;
+  min-width: 150px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.course-card {
+  background: white;
+  border-left: 5px solid #007bff;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+}

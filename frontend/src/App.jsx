@@ -4,6 +4,7 @@ import StudentDashboard from './features/student/StudentDashboard';
 import InstructorDashboard from './features/instructor/InstructorDashboard';
 import CourseSelection from "./features/student/CourseSelection.jsx";
 import CourseStudentsPage from './features/instructor/CourseStudentsPage';
+import Calendar from "./features/student/Calendar.jsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/InstructorDashboard"  element={<InstructorDashboard/>} />
         <Route path="/StudentDashboard"  element={<StudentDashboard/>} />
         <Route path="/instructor/course/:id/students" element={<CourseStudentsPage />} />
+        <Route path="/StudentDashboard/Calendar/" element={<Calendar/>}/>
       </Routes>
     </Router>
   );

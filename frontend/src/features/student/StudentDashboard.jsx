@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import {Link} from "react-router-dom";
+import Calendar from './Calendar';
 
 const StudentDashboard = () => {
   const fullName = localStorage.getItem('full_name')
@@ -49,6 +50,8 @@ if (loading) return (
           <Link to="/grades" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Notlarım
           </Link>
           <Link to="/settings" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ayarlar
+          </Link>
+          <Link to="./Calendar" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Takvim
           </Link>
         </nav>
       </aside>
