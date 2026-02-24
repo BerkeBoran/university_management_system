@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -35,3 +35,39 @@ class InstructorCourseDetailView(generics.RetrieveAPIView):
                 semester__is_active = True,
             )
         return Course.objects.none()
+
+
+class VisualCalendarView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = self.request.user
+        if not hasattr(user, 'student'):
+            return Response({"error": "Sadece öğrenciler takvimini görebilir."}, status=403)
+
+        student = user.student
+        courses = Course.objects.filter(department__department = student.department)
+
+
+        calendar ={
+            "Monday": [],
+            "Tuesday": [],
+            "Wednesday": [],
+            "Thursday": [],
+            "Friday": [],
+        }
+        for course in courses:
+            time_info = course.course_time
+            if time_info and time_info.course_days:
+                    days_list = [d.strip() for d in time_info.course_days.split(',')]
+                    course_data = {
+                    "course_name": course.course_name,
+                    "course_id": course.course_id,
+                    "classroom": course.classroom.classroom_name,
+                    "course_start_time": time_info.course_start_time.strftime("%H:%M"),
+                    "course_end_time": time_info.course_end_time.strftime("%H:%M"),
+                }
+            for day in days_list:
+                if day in calendar:
+                    calendar[day].append(course_data.copy())
+        return Response(calendar, status = status.HTTP_200_OK)
+
