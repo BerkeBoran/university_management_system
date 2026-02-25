@@ -52,6 +52,9 @@ class EnrollCourseView(APIView):
             if not new_course_time:
                 return Response({"error: Dersin Saati Tanımlanmamış"}, status = status.HTTP_400_BAD_REQUEST)
 
+            if student.courses.filter(id=course.id).exists():
+                return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
+
             current_courses = student.courses.all()
 
             for current_course in current_courses:
@@ -60,10 +63,8 @@ class EnrollCourseView(APIView):
                 if current_time:
                     if current_time.course_days == new_course_time.course_days:
                         if (current_time.course_start_time < new_course_time.course_end_time) and  (current_time.course_end_time > new_course_time.course_start_time):
-                            return Response({"error: Saat Çakışması"}, status = status.HTTP_400_BAD_REQUEST)
+                            return Response({"error": "Saat Çakışması"}, status = status.HTTP_400_BAD_REQUEST)
 
-            if student.courses.filter(id=course.id).exists():
-                return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
 
             student.courses.add(course)
             return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)

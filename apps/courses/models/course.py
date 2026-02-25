@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 class CourseTime(models.Model):
     Days = [
@@ -83,9 +85,40 @@ class Course(models.Model):
     department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True,related_name = "courses")
     grade = models.ForeignKey(Grade,on_delete=models.CASCADE,null=True,blank=True,related_name = "courses")
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE,null=True,)
+
     @property
     def remaining_capacity(self):
         enrolled_count = self.students.count()
         return max(0, enrolled_count)
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
+
+    def clean(self):
+        if not self.classroom and not self.course_time:
+            return
+
+
+        new_start_time = self.course_time.course_start_time
+        new_end_time = self.course_time.course_end_time
+        new_days = self.course_time.course_days
+        new_classroom = self.classroom
+
+        conflicting_courses = Course.objects.filter(
+            classroom = new_classroom,
+            course_time__course_days = new_days,
+
+        ).filter(
+            Q(course_time__course_start_time__lt = new_end_time, course_time__course_end_time__gt = new_start_time)
+        ).exclude(id = self.id)
+
+        if conflicting_courses.exists():
+            raise ValidationError(
+                f"Saat Çakışması: {new_classroom} sınıfında {new_days} günü "
+                f"bu saatler arasında başka bir ders tanımlı!"
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+

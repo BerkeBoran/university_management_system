@@ -13,10 +13,10 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(username, password, **extra_fields)
 
-    def create_superuser(self, username, password=None, **extrafields):
-        extrafields.setdefault('is_staff', True)
-        extrafields.setdefault('is_superuser', True)
-        return self._create_user(username, password, **extrafields)
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self._create_user(username, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
