@@ -8,11 +8,11 @@ from apps.courses.models.course import Department
 class Instructor(User):
     department= models.CharField(choices= Department.DepartmentChoices,max_length=50,null=True,blank=True,)
     class Title(models.TextChoices):
-        PROFESSOR = "PROF", "Profesör"
-        ASSOC_PROF = "ASSOC_PROF", "Doçent"
-        ASST_PROF = "ASST_PROF", "Dr. Öğr. Üyesi"
-        LECTURER = "LECT", "Öğretim Görevlisi"
-        RESEARCH_ASST = "RA", "Araştırma Görevlisi"
+        PROFESSOR = "PROF",
+        ASSOC_PROF = "ASSOC_PROF"
+        ASST_PROF = "ASST_PROF"
+        LECTURER = "LECT"
+        RESEARCH_ASST = "RA"
 
     title = models.CharField(
         max_length=10,

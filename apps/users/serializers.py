@@ -37,7 +37,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username
         data['full_name'] = f"{self.user.first_name} {self.user.last_name}"
         data['role'] = self.user.role
-        if self.user.role == 'instructor':
+        if self.user.role == 'Instructor':
             data['title'] = self.user.instructor.get_title_display()
         else:
             data['title'] = None
@@ -64,7 +64,7 @@ class InstructorProfileSerializer(serializers.ModelSerializer):
     courses = CourseSerializer(many=True, read_only=True)
     class Meta:
         model = Instructor
-        fields = ['id','username','first_name','last_name','courses','department',]
+        fields = ['id','username','first_name','last_name','courses','department','title']
 class EnrolledStudentSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     class Meta:

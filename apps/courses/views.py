@@ -38,14 +38,19 @@ class InstructorCourseDetailView(generics.RetrieveAPIView):
 
 
 class VisualCalendarView(APIView):
-    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = self.request.user
-        if not hasattr(user, 'student'):
-            return Response({"error": "Sadece öğrenciler takvimini görebilir."}, status=403)
 
-        student = user.student
-        courses = Course.objects.filter(department__department = student.department)
+
+        if hasattr(user, 'instructor'):
+            instructor = user.instructor
+            courses = Course.objects.filter(department__department = instructor.department)
+
+
+        if hasattr(user, 'student'):
+            student = user.student
+            courses = Course.objects.filter(department__department = student.department)
+
 
 
         calendar ={
@@ -65,6 +70,7 @@ class VisualCalendarView(APIView):
                     "classroom": course.classroom.classroom_name,
                     "course_start_time": time_info.course_start_time.strftime("%H:%M"),
                     "course_end_time": time_info.course_end_time.strftime("%H:%M"),
+                    "course_instructor": f"{course.instructor.title} {course.instructor.first_name} {course.instructor.last_name}",
                 }
             for day in days_list:
                 if day in calendar:
