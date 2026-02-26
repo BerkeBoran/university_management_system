@@ -2,6 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.users.models import Instructor
 
 from apps.courses.models.course import Course
+from apps.courses.models.forum import Question, Answer
 from .models.student import Student
 from rest_framework import serializers
 
@@ -79,3 +80,27 @@ class InstructorCourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id','capacity','course_name','students']
+
+class AnswerSerializer(serializers.ModelSerializer):
+    author_name = serializers.ReadOnlyField(source='author.get_full_name')
+    class Meta:
+        model = Answer
+        fields = ['id','questions','questions_text','created_at','updated_at','author_name','upvotes','author','is_accepted']
+        read_only_fields = ['author_name','upvotes','is_accepted']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    answer = AnswerSerializer(many=True, read_only=True)
+    author_name = serializers.ReadOnlyField(source='author.get_full_name')
+    class Meta:
+        model = Question
+        fields =  ['id','created_at','updated_at','question_title','author','author_name','answer','course','is_resolved','question_text']
+        read_only_fields = ['author','is_resolved']
+
+    def validate(self, attrs):
+        if attrs.get('is_accepted'):
+            question = self.instance.question if self.instance else attrs['question']
+            Answer.objects.filter(question=question).update(is_accepted=False)
+            question.is_resolved = True
+            question.save()
+        return attrs
+

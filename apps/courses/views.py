@@ -1,10 +1,12 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.courses.models import Course
-from apps.users.serializers import CourseSerializer, InstructorCourseSerializer
+from apps.users.serializers import CourseSerializer, InstructorCourseSerializer, QuestionSerializer, AnswerSerializer
+from apps.courses.models.forum import Question,Answer
+from apps.courses.permission import IsTeacherOrQuestionAuthor
 
 
 class AvaliableCoursesView(generics.ListAPIView):
@@ -77,3 +79,30 @@ class VisualCalendarView(APIView):
                     calendar[day].append(course_data.copy())
         return Response(calendar, status = status.HTTP_200_OK)
 
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update','destroy']:
+            return [IsTeacherOrQuestionAuthor()]
+        return [IsAuthenticated()]
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
+
+    def get_queryset(self):
+        course_id = self.request.query_params.get('course_id')
+        if course_id:
+            return self.queryset.filter(course_id = course_id)
+        return self.queryset
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
