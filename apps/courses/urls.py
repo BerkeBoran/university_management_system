@@ -6,11 +6,11 @@ from .views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalen
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='questions')
-router.register(r'Answers', AnswerViewSet, basename='answers')
+router.register(r'answers', AnswerViewSet, basename='answers')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('', AvaliableCoursesView.as_view(), name='course-list'),
+    path('course-list', AvaliableCoursesView.as_view(), name='course-list'),
     path('instructor/course-detail/<int:pk>/', InstructorCourseDetailView.as_view(), name='instructor-course-detail'),
     path('calendar/', VisualCalendarView.as_view(), name='visual_calendar'),
 ]
