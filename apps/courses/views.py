@@ -85,24 +85,36 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated]
 
-
-    def get_permissions(self):
-        if self.action in ['update', 'partial_update','destroy']:
-            return [IsTeacherOrQuestionAuthor()]
-        return [IsAuthenticated()]
-    def perform_create(self, serializer):
-        serializer.save(author = self.request.user)
-
     def get_queryset(self):
+        queryset = self.queryset
         course_id = self.request.query_params.get('course_id')
         if course_id:
             return self.queryset.filter(course_id = course_id)
         return self.queryset
 
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update','destroy']:
+            return [IsTeacherOrQuestionAuthor()]
+        return [IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
+
+
+
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Answer.objects.all()
+
+        if self.action == 'list':
+            question_id = self.request.query_params.get('question_id')
+            if question_id:
+                return self.queryset.filter(question_id = question_id)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author = self.request.user)

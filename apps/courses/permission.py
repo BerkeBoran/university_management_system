@@ -11,7 +11,7 @@ class IsTeacherOrQuestionAuthor(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        is_question_author = obj.question_author == request.user
+        is_question_author = obj.author == request.user
 
         is_course_teacher = False
 
