@@ -1,6 +1,7 @@
 import secrets
 import string
 from django.db import models
+from django.utils import timezone
 from .base import User
 from apps.courses.models.course import Department
 
@@ -20,6 +21,14 @@ class Instructor(User):
         default=Title.LECTURER,
         verbose_name="Ünvan"
     )
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = User.Role.INSTRUCTOR

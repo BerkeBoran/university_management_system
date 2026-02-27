@@ -10,12 +10,18 @@ class Student(User):
     gpa = models.DecimalField(max_digits = 3, decimal_places = 2, default = 0)
     department = models.CharField(max_length = 120, choices = Department.DepartmentChoices)
     grade = models.IntegerField(default = 1, choices = Grade.GradeChoices)
-
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     courses = models.ManyToManyField(
         Course,
         related_name="students",
         verbose_name="Kayıtlı Dersler",
         blank=True, )
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
 
     def save(self, *args, **kwargs):
         if not self.pk:

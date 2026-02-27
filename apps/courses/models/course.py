@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ValidationError
@@ -10,15 +11,31 @@ class CourseTime(models.Model):
         ("Thursday", "Thursday"),
         ("Friday", "Friday"),
     ]
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     course_days = models.TextField(max_length=100, choices = Days)
     course_start_time = models.TimeField(blank = True, null = True,)
     course_end_time = models.TimeField(blank = True, null = True,)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def __str__(self):
         return f"{self.course_days} - {self.course_start_time} - {self.course_end_time}"
 
 class Classroom(models.Model):
     classroom_name = models.CharField(max_length = 100)
     classroom_capacity = models.PositiveIntegerField()
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def __str__(self):
         return f"{self.classroom_name}"
 
@@ -31,7 +48,15 @@ class Semester(models.Model):
         (Spring, "Spring"),
         (Autumn, "Autumn"),
     )
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     semester = models.TextField(choices = Semester_Choices)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def save(self, *args, **kwargs):
         if self.is_active:
             Semester.objects.filter(is_active = True).update(is_active = False)
@@ -49,7 +74,15 @@ class Department(models.Model):
         (MATH, "MATH"),
         (SWE, "SWE"),
     )
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     department = models.TextField(choices = DepartmentChoices)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def __str__(self):
         return f"{self.department}"
 
@@ -65,7 +98,15 @@ class Grade(models.Model):
         (JUNIOR, "Junior"),
         (SENIOR, "Senior"),
     )
+    is_deleted = models.BooleanField(default = False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     grade = models.IntegerField(choices = GradeChoices)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def __str__(self):
         return f"{self.grade}"
 
@@ -78,6 +119,8 @@ class Course(models.Model):
     capacity = models.IntegerField(default = 50, verbose_name = "Dersin Kontenjanı")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    is_deleted = models.BooleanField(default = False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     course_time = models.ForeignKey(CourseTime,on_delete=models.CASCADE,null = True,blank = True,related_name = "courses")
     classroom = models.ForeignKey(Classroom, on_delete = models.CASCADE, null = True, blank = True, related_name = "courses")
@@ -92,6 +135,11 @@ class Course(models.Model):
         return max(0, enrolled_count)
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
 
     def clean(self):
         if not self.classroom and not self.course_time:

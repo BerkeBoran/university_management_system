@@ -11,6 +11,7 @@ from apps.courses.permission import IsTeacherOrQuestionAuthor
 
 class AvaliableCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
+
     def get_queryset(self):
         user = self.request.user
         if hasattr(user, 'student'):
@@ -19,6 +20,7 @@ class AvaliableCoursesView(generics.ListAPIView):
                 department__department = student.department,
                 grade__grade = student.grade,
                 semester__is_active = True,
+                is_deleted = False,
             )
 
         return Course.objects.none()
@@ -35,6 +37,7 @@ class InstructorCourseDetailView(generics.RetrieveAPIView):
                 instructor = instructor,
                 department__department = instructor.department,
                 semester__is_active = True,
+                is_deleted = False,
             )
         return Course.objects.none()
 
@@ -85,12 +88,17 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated]
 
+    def destroy(self, request,*args,**kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
+
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = Question.objects.filter(is_deleted = False)
         course_id = self.request.query_params.get('course_id')
         if course_id:
-            return self.queryset.filter(course_id = course_id)
-        return self.queryset
+            return queryset.filter(course_id = course_id)
+        return queryset
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update','destroy']:
@@ -107,13 +115,18 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
     permission_classes = [IsAuthenticated]
 
+    def destroy(self,request,*args,**kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
+
     def get_queryset(self):
-        queryset = Answer.objects.all()
+        queryset = Answer.objects.filter(is_deleted = False)
 
         if self.action == 'list':
             question_id = self.request.query_params.get('question_id')
             if question_id:
-                return self.queryset.filter(question_id = question_id)
+                return queryset.filter(question_id = question_id)
         return queryset
 
     def perform_create(self, serializer):
