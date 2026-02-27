@@ -1,29 +1,9 @@
-from rest_framework import generics, permissions, status
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from apps.users.serializers import MyTokenObtainPairSerializer, StudentProfileSerializer, InstructorProfileSerializer
+
 from apps.courses.models import Course
-from apps.users.models import Student
-from apps.users.models import Instructor
-
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
-class MyProfileView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = StudentProfileSerializer
-
-    def get(self, request):
-        if hasattr(request.user, 'student'):
-            student = Student.objects.prefetch_related('courses').get(id = request.user.id)
-            serializer = StudentProfileSerializer(student)
-        if hasattr(request.user, 'instructor'):
-            instructor = Instructor.objects.prefetch_related('courses').get(id = request.user.id)
-            serializer = InstructorProfileSerializer(instructor)
-        return Response(serializer.data)
 
 
 class EnrollCourseView(APIView):
