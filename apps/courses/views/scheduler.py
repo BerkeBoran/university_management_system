@@ -1,4 +1,5 @@
 from rest_framework import status, generics
+from rest_framework.generics import DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -79,3 +80,8 @@ class VisualCalendarView(APIView):
                 if day in calendar:
                     calendar[day].append(course_data.copy())
         return Response(calendar, status = status.HTTP_200_OK)
+
+class CourseDeleteView(DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
