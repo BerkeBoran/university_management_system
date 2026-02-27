@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'apps.users',
     'apps.courses',
+    'apps.core',
 ]
 AUTH_USER_MODEL = 'users.User'
 

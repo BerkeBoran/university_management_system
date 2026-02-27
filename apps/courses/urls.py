@@ -2,7 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalendarView,AnswerViewSet,QuestionViewSet
+from apps.courses.views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalendarView,AnswerViewSet,QuestionViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='questions')

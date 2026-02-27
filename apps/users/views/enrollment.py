@@ -1,9 +1,11 @@
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.courses.models import Course
+from apps.core.models.settings import SystemSettings
 
 
 class EnrollCourseView(APIView):
@@ -12,6 +14,14 @@ class EnrollCourseView(APIView):
     def post(self, request):
         course_id = request.data.get('course_id')
         user = request.user
+
+        settings = SystemSettings.objects.get(id = 1)
+        if not settings or not settings.is_enrollment_open:
+            return Response({"Ders Dönemi Şuan kapalı"}, status = status.HTTP_403_FORBIDDEN)
+        if timezone.now() > settings.enrollment_end_date:
+            settings.is_enrollment_open = False
+            settings.save()
+            return Response({"error": "Kayıt süresi doldu."}, status=status.HTTP_403_FORBIDDEN)
 
         if not hasattr(user, 'student'):
             return Response({"error": "Sadece öğrenci hesabı ile ders seçimi yapılabilir."},
