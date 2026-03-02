@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.courses.models import Course
+from apps.courses.models.course import Classroom, CourseTime, Semester, Department, Grade
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -22,3 +23,30 @@ class InstructorCourseSerializer(serializers.ModelSerializer):
         fields = super().get_fields()
         fields['students'] = EnrolledStudentSerializer(many=True, read_only = True)
         return fields
+
+class ClassroomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Classroom
+        fields = ['id','classroom_name','classroom_capacity']
+
+class CourseTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseTime
+        fields = '__all__'
+
+class SemesterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Semester
+        fields = ['id','semester', 'is_active','year']
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id','department']
+
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grade
+        fields = ['id','grade']
+
+
