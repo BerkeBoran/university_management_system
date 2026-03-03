@@ -12,9 +12,10 @@ const CourseSelection = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/courses/', {
+                const response = await axios.get('http://localhost:8000/api/courses/course-list', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
+                console.log("Gelen Veri:", response.data); // Buraya bak!
                 setCourses(response.data);
                 setLoading(false);
             } catch (err) {
