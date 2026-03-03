@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -6,58 +7,62 @@ from rest_framework.views import APIView
 
 from apps.courses.models import Course
 from apps.core.models.settings import SystemSettings
-
+from apps.courses.permission import IsStudent
+from apps.courses.models.section import Section
+from apps.courses.models.enrollment import Enrollment
 
 class EnrollCourseView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsStudent]
 
     def post(self, request):
         course_id = request.data.get('course_id')
-        user = request.user
-
+        section_id = request.data.get('section_id')
+        student = request.user.student
         settings = SystemSettings.objects.get(id = 1)
-        if not settings or not settings.is_enrollment_open:
-            return Response({"Ders Dönemi Şuan kapalı"}, status = status.HTTP_403_FORBIDDEN)
-        if timezone.now() > settings.enrollment_end_date:
-            settings.is_enrollment_open = False
-            settings.save()
-            return Response({"error": "Kayıt süresi doldu."}, status=status.HTTP_403_FORBIDDEN)
 
-        if not hasattr(user, 'student'):
-            return Response({"error": "Sadece öğrenci hesabı ile ders seçimi yapılabilir."},
-                            status=status.HTTP_403_FORBIDDEN)
 
-        student = user.student
         try:
-            course = Course.objects.get(id = course_id)
-            if course.remaining_capacity == course.capacity:
-                return Response({"error" : "Dersin Kontenjanı dolmuştur."}, status = status.HTTP_403_FORBIDDEN)
-            if course.department.department != student.department:
-                return Response({"error": "Bu ders sizin bölümünüze uygun değil."}, status = status.HTTP_403_FORBIDDEN)
+            with (transaction.atomic()):
+                section = Section.objects.get(id = section_id)
 
-            if course.grade.grade != student.grade:
-                return Response({"error": "Bu ders sizin sınıfınıza uygun değil."}, status = status.HTTP_403_FORBIDDEN)
+                if Enrollment.objects.filter(student = student, section = section_id).exists():
+                    return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
+                if not settings or not settings.is_enrollment_open:
+                    return Response({"Ders Dönemi Şuan kapalı"}, status=status.HTTP_403_FORBIDDEN)
+                if timezone.now() > settings.enrollment_end_date:
+                    settings.is_enrollment_open = False
+                    settings.save()
+                    return Response({"error": "Kayıt süresi doldu."}, status=status.HTTP_403_FORBIDDEN)
+                try:
+                    course = Course.objects.get(id=course_id)
+                    if course.remaining_capacity == course.capacity:
+                        return Response({"error": "Dersin Kontenjanı dolmuştur."}, status=status.HTTP_403_FORBIDDEN)
+                    new_course_time = course.course_time
 
-            new_course_time = course.course_time
-            if not new_course_time:
-                return Response({"error: Dersin Saati Tanımlanmamış"}, status = status.HTTP_400_BAD_REQUEST)
+                    current_courses = student.courses.all()
 
-            if student.courses.filter(id=course.id).exists():
-                return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
+                    for current_course in current_courses:
+                        current_time = current_course.course_time
 
-            current_courses = student.courses.all()
+                        if current_time:
+                            if current_time.course_days == new_course_time.course_days:
+                                if (current_time.course_start_time < new_course_time.course_end_time) and (
+                                        current_time.course_end_time > new_course_time.course_start_time):
+                                    return Response({"error": "Saat Çakışması"}, status=status.HTTP_400_BAD_REQUEST)
+                    enrollment = Enrollment.objects.create(
+                        student=student,
+                        section=section,
+                        midterm_grade=None,
+                        final_grade=None
+                    )
+                    student.courses.add(course)
+                    return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)
 
-            for current_course in current_courses:
-                current_time = current_course.course_time
+                except Course.DoesNotExist:
+                    return Response({"error": "Ders bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
 
-                if current_time:
-                    if current_time.course_days == new_course_time.course_days:
-                        if (current_time.course_start_time < new_course_time.course_end_time) and  (current_time.course_end_time > new_course_time.course_start_time):
-                            return Response({"error": "Saat Çakışması"}, status = status.HTTP_400_BAD_REQUEST)
+        except Section.DoesNotExist:
+            return Response({"Şube Bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
 
 
-            student.courses.add(course)
-            return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)
 
-        except Course.DoesNotExist:
-            return Response({"error": "Ders bulunamadı."}, status=status.HTTP_404_NOT_FOUND)

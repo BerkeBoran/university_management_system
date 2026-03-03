@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 
-from apps.courses.models.course import Classroom, CourseTime, Semester, Department, Grade
+from apps.courses.models.section import Classroom, CourseTime, Semester
+from apps.courses.models.course import  Department, Grade
 from apps.users.serializers.courses import ClassroomSerializer, CourseTimeSerializer, SemesterSerializer,DepartmentSerializer,GradeSerializer
 
 

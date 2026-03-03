@@ -1,5 +1,7 @@
 from django.contrib import admin
-from apps.courses.models.course import Course, Grade, Department, Semester, Classroom, CourseTime
+from apps.courses.models.course import Course, Grade, Department
+from apps.courses.models.enrollment import Enrollment
+from apps.courses.models.section import Section,Semester, Classroom, CourseTime
 
 
 @admin.register(Classroom)
@@ -25,4 +27,12 @@ class SemesterAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CoursesAdmin(admin.ModelAdmin):
-    list_display = ("ects","capacity","instructor","credit","course_name","course_id","course_detail","department","grade","semester","classroom","course_time")
+    list_display = ("ects","credit","course_name","course_id","course_detail","department","grade")
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ("student","section","midterm_grade","final_grade")
+
+@admin.register(Section)
+class SectionAdmin(admin.ModelAdmin):
+    list_display = ("course","semester","classroom","instructor","capacity","course_time")

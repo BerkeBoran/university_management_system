@@ -1,16 +1,18 @@
 from rest_framework import serializers
 
 from apps.courses.models import Course
-from apps.courses.models.course import Classroom, CourseTime, Semester, Department, Grade
+from apps.courses.models.course import Department, Grade
+from apps.courses.models.section import Classroom, CourseTime, Semester
 
 
 class CourseSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department', read_only=True)
     semester_name = serializers.CharField(source='semester.semester', read_only=True)
+    section_id = serializers.IntegerField(read_only=True)
     remaining_capacity = serializers.ReadOnlyField()
     class Meta:
         model = Course
-        fields = ['id','course_id','course_name','ects','credit', 'grade', 'course_detail', 'department_name','capacity','semester_name','remaining_capacity',]
+        fields = ['id','course_id','course_name','ects','credit', 'grade', 'course_detail', 'department_name','capacity','semester_name','remaining_capacity','section_id']
 
 
 class InstructorCourseSerializer(serializers.ModelSerializer):

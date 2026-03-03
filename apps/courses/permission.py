@@ -21,3 +21,10 @@ class IsTeacherOrQuestionAuthor(permissions.BasePermission):
         return is_course_teacher or is_question_author
 
 
+class IsTeacher(permissions.BasePermission):
+    def has_permission(self, request,view):
+        return hasattr(request.user, 'instructor')
+
+class IsStudent(permissions.BasePermission):
+    def has_permission(self, request, view,):
+        return hasattr(request.user, 'student')
