@@ -11,10 +11,10 @@ class MyProfileView(generics.RetrieveAPIView):
 
     def get(self, request):
         if hasattr(request.user, 'student'):
-            student = Student.objects.prefetch_related('courses').get(id = request.user.id)
+            student = Student.objects.get(id = request.user.id)
             serializer = StudentProfileSerializer(student)
         if hasattr(request.user, 'instructor'):
-            instructor = Instructor.objects.prefetch_related('courses').get(id = request.user.id)
+            instructor = Instructor.objects.get(id = request.user.id)
             serializer = InstructorProfileSerializer(instructor)
         return Response(serializer.data)
 

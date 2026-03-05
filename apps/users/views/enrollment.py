@@ -18,26 +18,28 @@ class EnrollCourseView(APIView):
         course_id = request.data.get('course_id')
         section_id = request.data.get('section_id')
         student = request.user.student
-        settings = SystemSettings.objects.get(id = 1)
 
 
         try:
+            settings = SystemSettings.objects.get(id=1)
             with (transaction.atomic()):
-                section = Section.objects.get(id = section_id)
+                section = Section.objects.prefetch_related('course','course_time').get(id=section_id)
+                course = section.course
 
                 if Enrollment.objects.filter(student = student, section = section_id).exists():
                     return Response({"error": "Bu derse zaten kayıtlısınız."}, status=status.HTTP_400_BAD_REQUEST)
+
                 if not settings or not settings.is_enrollment_open:
                     return Response({"Ders Dönemi Şuan kapalı"}, status=status.HTTP_403_FORBIDDEN)
+
                 if timezone.now() > settings.enrollment_end_date:
                     settings.is_enrollment_open = False
                     settings.save()
                     return Response({"error": "Kayıt süresi doldu."}, status=status.HTTP_403_FORBIDDEN)
                 try:
-                    course = Course.objects.get(id=course_id)
-                    if course.remaining_capacity == course.capacity:
+                    if section.remaining_capacity == section.capacity:
                         return Response({"error": "Dersin Kontenjanı dolmuştur."}, status=status.HTTP_403_FORBIDDEN)
-                    new_course_time = course.course_time
+                    new_course_time = section.course_time
 
                     current_courses = student.courses.all()
 
@@ -55,7 +57,7 @@ class EnrollCourseView(APIView):
                         midterm_grade=None,
                         final_grade=None
                     )
-                    student.courses.add(course)
+                    section.save()
                     return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)
 
                 except Course.DoesNotExist:

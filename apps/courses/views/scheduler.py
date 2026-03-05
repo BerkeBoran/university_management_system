@@ -5,8 +5,23 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.courses.models import Course
-from apps.users.serializers.courses import InstructorCourseSerializer, CourseSerializer
+from apps.users.serializers.courses import InstructorCourseSerializer, CourseSerializer, SectionSerializer
+from apps.courses.models import Section
 
+class SectionListView(generics.ListAPIView):
+    serializer_class = SectionSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'student'):
+            student = user.student
+            return Section.objects.filter(
+                semester__is_active = True,
+                department__department = student.department,
+                grade__grade = student.grade,
+                is_deleted=False,
+            )
+        return Section.objects.none()
 
 class AvaliableCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
@@ -16,10 +31,10 @@ class AvaliableCoursesView(generics.ListAPIView):
         if hasattr(user, 'student'):
             student = user.student
             return Course.objects.filter(
-                department__department = student.department,
-                grade__grade = student.grade,
-                semester__is_active = True,
-                is_deleted = False,
+                sections__semester__is_active = True,
+                sections__department__department=student.department,
+                sections__grade__grade=student.grade,
+                is_deleted=False,
             )
 
         return Course.objects.none()
@@ -32,13 +47,13 @@ class InstructorCourseDetailView(generics.RetrieveAPIView):
         user = self.request.user
         if hasattr(user, 'instructor'):
             instructor = user.instructor
-            return Course.objects.filter(
+            return Section.objects.filter(
                 instructor = instructor,
                 department__department = instructor.department,
                 semester__is_active = True,
                 is_deleted = False,
             )
-        return Course.objects.none()
+        return Section.objects.none()
 
 
 class VisualCalendarView(APIView):

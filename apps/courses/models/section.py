@@ -1,3 +1,5 @@
+import string
+
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
@@ -5,6 +7,53 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from apps.courses.models import Course
+
+
+class Grade(models.Model):
+    FRESHMAN = 1
+    SOPHOMORE = 2
+    JUNIOR = 3
+    SENIOR = 4
+
+    GradeChoices = (
+        (FRESHMAN, "Freshman"),
+        (SOPHOMORE, "Sophomore"),
+        (JUNIOR, "Junior"),
+        (SENIOR, "Senior"),
+    )
+    is_deleted = models.BooleanField(default = False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    grade = models.IntegerField(choices = GradeChoices)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return f"{self.grade}"
+
+
+class Department(models.Model):
+    CENG = "CENG"
+    MATH = "MATH"
+    SWE = "SWE"
+    DepartmentChoices = (
+        (CENG, "CENG"),
+        (MATH, "MATH"),
+        (SWE, "SWE"),
+    )
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    department = models.TextField(choices = DepartmentChoices)
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return f"{self.department}"
 
 class CourseTime(models.Model):
     Days = [
@@ -69,20 +118,20 @@ class Semester(models.Model):
         return f"{self.year} - {self.get_semester_display()}"
 
 class Section(models.Model):
-    section_number = models.PositiveIntegerField()
-
     course_time = models.ForeignKey(CourseTime, on_delete=models.CASCADE,null=True)
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,limit_choices_to={'role': 'Instructor'},related_name = 'sections')
     semester = models.ForeignKey(Semester,on_delete=models.CASCADE,related_name = 'sections',null=True)
-    classroom = models.ForeignKey(Classroom,on_delete=models.CASCADE,related_name = 'sections')
+    classroom = models.ForeignKey(Classroom,on_delete=models.CASCADE,related_name = 'sections_classroom')
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name = 'sections')
-    capacity = models.PositiveIntegerField(null = True, blank = True)
+    department = models.ForeignKey(Department,on_delete=models.CASCADE,related_name = 'sections_department',null=True)
+    grade = models.ForeignKey(Grade,on_delete=models.CASCADE,related_name = 'sections_grade',null=True)
+
+    capacity = models.PositiveIntegerField(null = True, blank = True,default = 50)
     is_deleted = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together= ('course','semester','section_number')
 
-
+    def __str__(self):
+        return f"{self.course.course_name} - {self.section_id}"
     def clean(self):
         if not self.classroom and not self.course_time:
             return
@@ -94,11 +143,11 @@ class Section(models.Model):
         new_classroom = self.classroom
 
         conflicting_courses = Course.objects.filter(
-            classroom = new_classroom,
-            course_time__course_days = new_days,
+            sections__classroom = new_classroom,
+            sections__course_time__course_days = new_days,
 
         ).filter(
-            Q(course_time__course_start_time__lt = new_end_time, course_time__course_end_time__gt = new_start_time)
+            Q(sections__course_time__course_start_time__lt = new_end_time, sections__course_time__course_end_time__gt = new_start_time)
         ).exclude(id = self.id)
 
         if conflicting_courses.exists():
@@ -113,4 +162,4 @@ class Section(models.Model):
         return max(0, enrolled_count)
 
     def __str__(self):
-        return f"{self.course.course_name} - Section {self.section_number}"
+        return f"{self.course.course_name}"

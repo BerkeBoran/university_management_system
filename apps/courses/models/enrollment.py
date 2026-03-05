@@ -4,8 +4,8 @@ from apps.courses.models.section import Section
 
 
 class Enrollment(models.Model):
-    student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='enrollment')
-    section = models.ForeignKey(Section, on_delete=models.CASCADE,related_name='enrollment')
+    student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='enrollments')
+    section = models.ForeignKey(Section, on_delete=models.CASCADE,related_name='enrollments')
 
     midterm_grade = models.DecimalField(max_digits=5, decimal_places=2,null=True,blank=True)
     final_grade = models.DecimalField(max_digits=5, decimal_places=2,null=True,blank=True)

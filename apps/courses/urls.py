@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.courses.views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalendarView,AnswerViewSet,QuestionViewSet
-from apps.courses.views.scheduler import CourseDeleteView
+from apps.courses.views.scheduler import CourseDeleteView, SectionListView
 from apps.courses.views.academic_management import ClassroomViewSet,CourseTimeViewSet,SemesterViewSet,GradeViewSet, DepartmentViewSet
 from apps.courses.views.enrollment_grade import EnrollmentGradeView
 
@@ -26,5 +26,6 @@ urlpatterns = [
     path('course-delete/<int:pk>/', CourseDeleteView.as_view(), name='CourseDelete'),
     path('enrollment-grade/',EnrollmentGradeView.as_view(), name='enrollment_grade'),
     path('enrollment-grade/<int:enrollment_grade_id>/',EnrollmentGradeView.as_view(), name='EnrollmentGrade'),
+    path('section-list/', SectionListView.as_view(), name='section_list'),
 
 ]

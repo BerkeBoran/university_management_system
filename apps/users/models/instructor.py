@@ -3,7 +3,7 @@ import string
 from django.db import models
 from django.utils import timezone
 from .base import User
-from apps.courses.models.course import Department
+from apps.courses.models.section import Department
 
 
 class Instructor(User):

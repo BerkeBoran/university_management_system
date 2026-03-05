@@ -1,4 +1,4 @@
-from .course import Course, Department
+from .course import Course
 from .enrollment import Enrollment
-from .section import Section
+from .section import Section, Classroom,CourseTime,Semester
 from apps.users.models.instructor import Instructor

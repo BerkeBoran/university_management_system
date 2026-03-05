@@ -1,4 +1,5 @@
-from apps.courses.models.course import Course, Department, Grade
+from apps.courses.models.course import Course
+from apps.courses.models.section import Department, Grade
 from .base import User
 from django.db import models
 from django.utils import timezone
