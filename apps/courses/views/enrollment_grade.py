@@ -15,6 +15,7 @@ class EnrollmentGradeView(APIView):
     def get(self, request):
             enrollment = Enrollment.objects.get()
             return Response({
+                "course_id": f"{enrollment.section.course_id}",
                 "student_id": f"{enrollment.student.id}",
                 "student_name": f"{enrollment.student.first_name} {enrollment.student.last_name}",
                 "midterm_grade": f"{enrollment.midterm_grade}",
@@ -24,11 +25,12 @@ class EnrollmentGradeView(APIView):
 
     def patch(self, request, ):
         course_id = request.data.get('course_id')
-        enrollment_id = request.data.get('enrollment_grade_id')
+        student_id = request.data.get('enrollment_grade_id')
         midterm = request.data.get('midterm_grade')
         final = request.data.get('final_grade')
+
         try:
-            enrollment = Enrollment.objects.get(id=enrollment_id, section__course_id=course_id)
+            enrollment = Enrollment.objects.get(student_id=student_id, section__course__id=course_id)
         except Enrollment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

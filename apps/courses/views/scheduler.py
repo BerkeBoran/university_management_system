@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from apps.courses.models import Course
 from apps.users.serializers.courses import InstructorCourseSerializer, CourseSerializer, SectionSerializer
 from apps.courses.models import Section
+from apps.courses.models import Enrollment
+
 
 class SectionListView(generics.ListAPIView):
     serializer_class = SectionSerializer
@@ -63,12 +65,12 @@ class VisualCalendarView(APIView):
 
         if hasattr(user, 'instructor'):
             instructor = user.instructor
-            courses = Course.objects.filter(department__department = instructor.department)
+            courses = Course.objects.filter(sections__department__department = instructor.department)
 
 
         if hasattr(user, 'student'):
             student = user.student
-            courses = Course.objects.filter(department__department = student.department)
+            courses = Course.objects.filter(sections__department__department = student.department)
 
 
 
@@ -79,17 +81,29 @@ class VisualCalendarView(APIView):
             "Thursday": [],
             "Friday": [],
         }
-        for course in courses:
-            time_info = course.course_time
+
+        enrollments = Enrollment.objects.filter(student = student).select_related(
+            "section__course",
+            "section__course_time",
+            "section__classroom",
+            "section__instructor",
+
+
+        )
+        for enrollment in enrollments:
+            section = enrollment.section
+            course = section.course
+            time_info = section.course_time
             if time_info and time_info.course_days:
                     days_list = [d.strip() for d in time_info.course_days.split(',')]
+
                     course_data = {
                     "course_name": course.course_name,
                     "course_id": course.course_id,
-                    "classroom": course.classroom.classroom_name,
+                    "classroom": section.classroom.classroom_name,
                     "course_start_time": time_info.course_start_time.strftime("%H:%M"),
                     "course_end_time": time_info.course_end_time.strftime("%H:%M"),
-                    "course_instructor": f"{course.instructor.title} {course.instructor.first_name} {course.instructor.last_name}",
+                    "course_instructor": f"{section.instructor.first_name} {section.instructor.last_name}",
                 }
             for day in days_list:
                 if day in calendar:
