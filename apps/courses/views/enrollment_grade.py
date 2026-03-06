@@ -1,13 +1,13 @@
 from django.template.context_processors import request
 from rest_framework import status
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from apps.courses.models.enrollment import Enrollment
-from apps.courses.permission import IsTeacher
-
+from apps.courses.permission import IsTeacher,IsStudent
+from apps.users.serializers.courses import EnrollCourseSerializer
 
 class EnrollmentGradeView(APIView):
     permission_classes = [IsAuthenticated,IsTeacher]
@@ -40,3 +40,10 @@ class EnrollmentGradeView(APIView):
         enrollment.save()
 
         return Response(status=status.HTTP_201_CREATED)
+
+class StudentGradeView(ListAPIView):
+    permission_classes = [IsAuthenticated,IsStudent]
+    serializer_class = EnrollCourseSerializer
+    def get_queryset(self):
+        user = self.request.user
+        return Enrollment.objects.filter(student=user)

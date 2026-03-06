@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from apps.courses.views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalendarView,AnswerViewSet,QuestionViewSet
 from apps.courses.views.scheduler import CourseDeleteView, SectionListView, InstructorCourseListView
 from apps.courses.views.academic_management import ClassroomViewSet,CourseTimeViewSet,SemesterViewSet,GradeViewSet, DepartmentViewSet
-from apps.courses.views.enrollment_grade import EnrollmentGradeView
+from apps.courses.views.enrollment_grade import EnrollmentGradeView, StudentGradeView
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='questions')
@@ -28,5 +28,6 @@ urlpatterns = [
     path('enrollment-grade/',EnrollmentGradeView.as_view(), name='enrollment_grade'),
     path('enrollment-grade/<int:enrollment_grade_id>/',EnrollmentGradeView.as_view(), name='EnrollmentGrade'),
     path('section-list/', SectionListView.as_view(), name='section_list'),
+    path('student-grade/',StudentGradeView.as_view(), name='student_grade'),
 
 ]
