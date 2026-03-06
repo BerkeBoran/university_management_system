@@ -55,6 +55,12 @@ const CourseGrade = () => {
                   {grade.final ?? "-"}
                 </span>
               </div>
+              <div className="flex justify-between items-center bg-indigo-50 p-2 rounded mt-2">
+                  <span className="text-sm text-indigo-700 font-bold">Harf Notu</span>
+                  <span className="text-lg font-black text-indigo-900">
+                      {grade.letter ?? "Belli Değil"}
+                  </span>
+              </div>
             </div>
           </div>
         ))}
