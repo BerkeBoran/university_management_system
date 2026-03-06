@@ -8,7 +8,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
     courses =EnrollCourseSerializer(source = 'enrollments',many=True, read_only=True)
     class Meta:
         model = Student
-        fields = ['id','username','first_name','last_name','gpa','courses',]
+        fields = ['id','username','first_name','last_name','gpa','courses','grade']
 
 
 class InstructorProfileSerializer(serializers.ModelSerializer):

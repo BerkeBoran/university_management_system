@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.courses.views import AvaliableCoursesView, InstructorCourseDetailView, VisualCalendarView,AnswerViewSet,QuestionViewSet
-from apps.courses.views.scheduler import CourseDeleteView, SectionListView
+from apps.courses.views.scheduler import CourseDeleteView, SectionListView, InstructorCourseListView
 from apps.courses.views.academic_management import ClassroomViewSet,CourseTimeViewSet,SemesterViewSet,GradeViewSet, DepartmentViewSet
 from apps.courses.views.enrollment_grade import EnrollmentGradeView
 
@@ -19,8 +19,9 @@ router.register(r'department', DepartmentViewSet, basename='department')
 
 
 urlpatterns = [
+    path('course-list-instructor/', InstructorCourseListView.as_view(), name='InstructorCourseList'),
     path('', include(router.urls)),
-    path('course-list', AvaliableCoursesView.as_view(), name='course-list'),
+    path('course-list/', AvaliableCoursesView.as_view(), name='course-list'),
     path('instructor/course-detail/<int:pk>/', InstructorCourseDetailView.as_view(), name='instructor_course_detail'),
     path('calendar/', VisualCalendarView.as_view(), name='visual_calendar'),
     path('course-delete/<int:pk>/', CourseDeleteView.as_view(), name='CourseDelete'),

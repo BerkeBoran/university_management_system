@@ -8,6 +8,7 @@ from apps.courses.models import Course
 from apps.users.serializers.courses import InstructorCourseSerializer, CourseSerializer, SectionSerializer
 from apps.courses.models import Section
 from apps.courses.models import Enrollment
+from apps.courses.permission import IsTeacher
 
 
 class SectionListView(generics.ListAPIView):
@@ -25,6 +26,7 @@ class SectionListView(generics.ListAPIView):
             )
         return Section.objects.none()
 
+
 class AvaliableCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
 
@@ -40,6 +42,23 @@ class AvaliableCoursesView(generics.ListAPIView):
             )
 
         return Course.objects.none()
+
+
+class InstructorCourseListView(generics.ListAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated,IsTeacher]
+
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'instructor'):
+            instructor = user.instructor
+            return Section.objects.filter(
+                instructor = instructor,
+                semester__is_active = True,
+                department__department = instructor.department,
+                is_deleted=False)
+        return Section.objects.none()
+
 
 class InstructorCourseDetailView(generics.RetrieveAPIView):
     serializer_class = InstructorCourseSerializer

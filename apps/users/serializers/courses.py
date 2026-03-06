@@ -37,16 +37,16 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class InstructorCourseSerializer(serializers.ModelSerializer):
     course_name = serializers.CharField(source='course.course_name', read_only=True)
-    students = serializers.CharField(source='student.student', read_only=True)
+    students = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Section
         fields = ['id','capacity','course_name','students']
 
-    def get_fields(self):
-        from .users import EnrolledStudentSerializer
-        fields = super().get_fields()
-        fields['students'] = EnrolledStudentSerializer(many=True, read_only = True)
-        return fields
+    def get_students(self, obj):
+        from apps.users.serializers import EnrolledStudentSerializer
+        enrollments = obj.enrollments.all()
+        students = [enrollment.student for enrollment in enrollments]
+        return EnrolledStudentSerializer(students, many=True, read_only = True).data
 
 class ClassroomSerializer(serializers.ModelSerializer):
     class Meta:
