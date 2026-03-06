@@ -12,9 +12,10 @@ class EnrollCourseSerializer(serializers.ModelSerializer):
     akts = serializers.ReadOnlyField(source='section.course.ects')
     midterm = serializers.ReadOnlyField(source='midterm_grade')
     final = serializers.ReadOnlyField(source='final_grade')
+    letter = serializers.ReadOnlyField(source='letter_grade')
     class Meta:
         model = Enrollment
-        fields = ['id','course_name','course_id','credit','midterm','final','akts']
+        fields = ['id','course_name','course_id','credit','midterm','final','akts','letter']
 
 class SectionSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department', read_only=True,)
