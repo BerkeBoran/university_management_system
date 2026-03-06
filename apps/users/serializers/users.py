@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from apps.users.serializers.courses import CourseSerializer
+from apps.users.serializers.courses import CourseSerializer, EnrollCourseSerializer
 from apps.users.models import Instructor,Student
 
 
+
 class StudentProfileSerializer(serializers.ModelSerializer):
-    courses = CourseSerializer(many=True, read_only=True)
+    courses =EnrollCourseSerializer(source = 'enrollments',many=True, read_only=True)
     class Meta:
         model = Student
         fields = ['id','username','first_name','last_name','gpa','courses',]

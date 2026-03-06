@@ -18,3 +18,4 @@ class MyProfileView(generics.RetrieveAPIView):
             serializer = InstructorProfileSerializer(instructor)
         return Response(serializer.data)
 
+

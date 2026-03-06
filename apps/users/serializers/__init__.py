@@ -1,4 +1,4 @@
 from .auth import MyTokenObtainPairSerializer
-from .users import StudentProfileSerializer, InstructorProfileSerializer, EnrolledStudentSerializer
+from .users import StudentProfileSerializer, InstructorProfileSerializer, EnrolledStudentSerializer,EnrollCourseSerializer
 from .courses import CourseSerializer, InstructorCourseSerializer
 from .forum import AnswerSerializer, QuestionSerializer

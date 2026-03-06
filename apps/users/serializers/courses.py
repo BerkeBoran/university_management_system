@@ -2,8 +2,19 @@ from rest_framework import serializers
 
 from apps.courses.models import Course
 from apps.courses.models.section import Classroom, CourseTime, Semester,Department, Grade
-from apps.courses.models import Section
+from apps.courses.models import Section,Enrollment
 
+
+class EnrollCourseSerializer(serializers.ModelSerializer):
+    course_name = serializers.CharField(source='section.course.course_name', read_only=True)
+    course_id = serializers.CharField(source='section.course.course_id', read_only=True)
+    credit = serializers.ReadOnlyField(source='section.course.credit')
+    akts = serializers.ReadOnlyField(source='section.course.ects')
+    midterm = serializers.ReadOnlyField(source='midterm_grade')
+    final = serializers.ReadOnlyField(source='final_grade')
+    class Meta:
+        model = Enrollment
+        fields = ['id','course_name','course_id','credit','midterm','final','akts']
 
 class SectionSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department', read_only=True,)

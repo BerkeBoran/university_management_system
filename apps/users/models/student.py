@@ -1,5 +1,5 @@
 from apps.courses.models.course import Course
-from apps.courses.models.section import Department, Grade
+from apps.courses.models.section import Department, Grade, Section
 from .base import User
 from django.db import models
 from django.utils import timezone
@@ -11,6 +11,7 @@ class Student(User):
     gpa = models.DecimalField(max_digits = 3, decimal_places = 2, default = 0)
     department = models.CharField(max_length = 120, choices = Department.DepartmentChoices)
     grade = models.IntegerField(default = 1, choices = Grade.GradeChoices)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE,null=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     courses = models.ManyToManyField(

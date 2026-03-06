@@ -57,6 +57,8 @@ class EnrollCourseView(APIView):
                         midterm_grade=None,
                         final_grade=None
                     )
+                    student.courses.add(section.course)
+                    student.save()
                     section.save()
                     return Response({"message": "Derse başarıyla kayıt oldunuz."}, status=status.HTTP_201_CREATED)
 
