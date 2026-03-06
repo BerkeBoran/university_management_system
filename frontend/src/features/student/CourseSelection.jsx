@@ -6,6 +6,7 @@ const CourseSelection = () => {
     const [loading, setLoading] = useState(true);
     const [enrollingId, setEnrollingId] = useState(null);
     const [error, setError] = useState(null);
+    const [selectedSections,setSelectedSections] = useState([])
 
     const token = localStorage.getItem('access');
 
@@ -26,11 +27,19 @@ const CourseSelection = () => {
         fetchCourses();
     }, [token]);
 
+    const handleSectionChange = async (courseId, sectionId) =>{
+        setSelectedSections(prev => ({...prev,[courseId]: sectionId}));
+    };
+
     const handleEnroll = async (courseId) => {
-        setEnrollingId(courseId);
-        try {
+            const section_id = selectedSections[courseId];
+            if (!section_id) {
+            alert("Lütfen bir şube seçin!");
+            return;}
+            setEnrollingId(courseId);
+            try {
             const response = await axios.post('http://localhost:8000/api/users/courses/',
-                { course_id: courseId },
+                { course_id: courseId,section_id: section_id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             alert(response.data.message || "Kaydınız başarıyla tamamlandı!");
@@ -62,18 +71,49 @@ const CourseSelection = () => {
                                     {course.ects} AKTS
                                 </span>
                                  <span className="text-gray-500 text-sm font-medium">
-                                    {course.remaining_capacity} / {course.capacity} Kontenjan
+                                    {selectedSections[course.id] ? (
+                                        (() => {
+                                            const selectedSec = course.sections.find(
+                                                (s) => s.id.toString() === selectedSections[course.id].toString()
+                                            );
+                                            return selectedSec
+                                                ? `${selectedSec.remaining_capacity ?? '0'} / ${selectedSec.capacity ?? course.capacity} Kontenjan`
+                                                : `${course.capacity} Toplam Kapenjan`;
+                                        })()
+                                    ) : (
+                                        `Toplam: ${course.capacity} Kontenjan`
+                                    )}
                                 </span>
                             </div>
-
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{course.course_name}</h3>
-                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                {course.course_detail || "Bu ders için açıklama bulunmuyor."}
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                {course.sections[0]?.course_name || "İsimsiz Ders"}
+                            </h3>
+                            <p className="text-gray-600 text-sm mb-4">
+                                {course.sections[0]?.course_detail || "Açıklama mevcut değil."}
                             </p>
-
                             <div className="flex items-center justify-between mt-6">
                                 <div className="text-sm text-gray-500">
                                     Kod: <span className="font-mono font-bold text-gray-700">{course.course_id}</span>
+                                </div>
+                                <div className="mt-4">
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">Şube Seçiniz:</label>
+                                    <select
+                                        className="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                        value={selectedSections[course.id] || ""}
+                                        onChange={(e) => handleSectionChange(course.id, e.target.value)}
+                                    >
+                                        <option value="">Lütfen seçin...</option>
+
+                                        {course.sections && course.sections.length > 0 ? (
+                                            course.sections.map((sec) => (
+                                                <option key={sec.id} value={sec.id}>
+                                                     Instructor: {sec.instructor} --  Day: {sec.course_days} -- Start Time: {sec.course_start_time.slice(0,5)} -- End Time:{sec.course_end_time.slice(0,5)}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option disabled>Şube bulunamadı</option>
+                                        )}
+                                    </select>
                                 </div>
 
                                 <button
