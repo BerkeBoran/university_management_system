@@ -3,12 +3,11 @@ from apps.users.serializers.courses import CourseSerializer, EnrollCourseSeriali
 from apps.users.models import Instructor,Student
 
 
-
 class StudentProfileSerializer(serializers.ModelSerializer):
     courses =EnrollCourseSerializer(source = 'enrollments',many=True, read_only=True)
     class Meta:
         model = Student
-        fields = ['id','username','first_name','last_name','gpa','courses','grade']
+        fields = ['id','username','first_name','last_name','gpa','grade','courses']
 
 
 class InstructorProfileSerializer(serializers.ModelSerializer):

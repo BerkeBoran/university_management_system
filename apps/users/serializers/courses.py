@@ -23,16 +23,22 @@ class SectionSerializer(serializers.ModelSerializer):
     grade = serializers.CharField(source='grade.grade', read_only=True)
     course_name = serializers.CharField(source='course.course_name', read_only=True)
     course_id = serializers.CharField(source='course.course_id', read_only=True)
+    instructor = serializers.CharField(source='instructor.instructor', read_only=True)
+    course_days = serializers.CharField(source='course_time.course_days', read_only=True)
+    course_start_time = serializers.CharField(source='course_time.course_start_time', read_only=True)
+    course_end_time = serializers.CharField(source='course_time.course_end_time', read_only=True)
     class Meta:
         model = Section
-        fields = ['id','department_name','semester','credit','grade','course_name','course_id']
+        fields = ['id','department_name','semester','credit','grade','course_name','course_id','instructor','course_days','course_start_time','course_end_time','remaining_capacity']
 
 class CourseSerializer(serializers.ModelSerializer):
+    sections = SectionSerializer(many=True, read_only=True)
     department_name = serializers.ReadOnlyField(source='sections.first.department.department')
     capacity = serializers.ReadOnlyField(source='sections.first.capacity')
+    course_name = serializers.CharField(source='course.course_name', read_only=True)
     class Meta:
         model = Course
-        fields = ['id','course_name','course_id','credit','ects','department_name','capacity']
+        fields = ['id','course_name','course_id','credit','ects','department_name','capacity','sections']
 
 
 class InstructorCourseSerializer(serializers.ModelSerializer):

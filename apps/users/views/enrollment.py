@@ -10,9 +10,12 @@ from apps.core.models.settings import SystemSettings
 from apps.courses.permission import IsStudent
 from apps.courses.models.section import Section
 from apps.courses.models.enrollment import Enrollment
+from apps.users.serializers import EnrollCourseSerializer
+
 
 class EnrollCourseView(APIView):
     permission_classes = [IsAuthenticated,IsStudent]
+    serializer_class = EnrollCourseSerializer
 
     def post(self, request):
         course_id = request.data.get('course_id')
