@@ -13,21 +13,29 @@ class EnrollmentGradeView(APIView):
     permission_classes = [IsAuthenticated,IsTeacher]
 
     def get(self, request):
-            enrollment = Enrollment.objects.get()
-            return Response({
+        enrollments = Enrollment.objects.all()
+
+        data = []
+        for enrollment in enrollments:
+            data.append({
                 "course_id": f"{enrollment.section.course_id}",
                 "student_id": f"{enrollment.student.id}",
                 "student_name": f"{enrollment.student.first_name} {enrollment.student.last_name}",
-                "midterm_grade": f"{enrollment.midterm_grade}",
-                "final_grade": f"{enrollment.final_grade}"
-
+                "midterm_grade": enrollment.midterm_grade,
+                "final_grade": enrollment.final_grade,
+                "makeup_grade": enrollment.makeup_grade,
+                "is_active_makeup_grade": enrollment.is_active_makeup_grade,
+                "letter_grade": enrollment.calculate_letter_grade()
             })
+
+        return Response(data)
 
     def patch(self, request, ):
         course_id = request.data.get('course_id')
         student_id = request.data.get('enrollment_grade_id')
         midterm = request.data.get('midterm_grade')
         final = request.data.get('final_grade')
+        makeup = request.data.get('makeup_grade')
 
         try:
             enrollment = Enrollment.objects.get(student_id=student_id, section__course__id=course_id)
@@ -36,6 +44,7 @@ class EnrollmentGradeView(APIView):
 
         enrollment.midterm_grade = midterm
         enrollment.final_grade = final
+        enrollment.makeup_grade = makeup
 
         enrollment.save()
 

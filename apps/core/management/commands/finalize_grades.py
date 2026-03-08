@@ -9,13 +9,14 @@ class Command(BaseCommand):
         enrollments = Enrollment.objects.filter(
             midterm_grade__isnull=False,
             final_grade__isnull=False,
-            letter_grade__isnull=True,
         )
         count = 0
         for enrollment in enrollments:
             grade = enrollment.calculate_letter_grade()
             if grade:
                 enrollment.letter_grade = grade
+                if enrollment.letter_grade == 'FF':
+                    enrollment.is_active_makeup_grade = True
                 enrollment.save()
                 count += 1
 

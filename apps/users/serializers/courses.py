@@ -13,9 +13,11 @@ class EnrollCourseSerializer(serializers.ModelSerializer):
     midterm = serializers.ReadOnlyField(source='midterm_grade')
     final = serializers.ReadOnlyField(source='final_grade')
     letter = serializers.ReadOnlyField(source='letter_grade')
+    makeup = serializers.ReadOnlyField(source='makeup_grade')
+    is_active_makeup_grade = serializers.BooleanField(read_only=True)
     class Meta:
         model = Enrollment
-        fields = ['id','course_name','course_id','credit','midterm','final','akts','letter']
+        fields = ['id','course_name','course_id','credit','midterm','final','akts','letter','makeup','is_active_makeup_grade']
 
 class SectionSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department', read_only=True,)
