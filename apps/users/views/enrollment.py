@@ -72,4 +72,42 @@ class EnrollCourseView(APIView):
             return Response({"Şube Bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
 
 
+class TranscriptView(APIView):
+    permission_classes = [IsAuthenticated,IsStudent]
 
+    def get(self,request):
+        user = request.user
+
+        enrollments = Enrollment.objects.filter(student = user,).select_related(
+            'section__course',
+            'section__semester',
+        ).order_by('section__semester__year','section__semester__semester')
+
+        transcript_data = {}
+
+        for enrollment in enrollments:
+            semester_name = f"{enrollment.section.semester.year} - {enrollment.section.semester.semester}"
+
+            if semester_name not in transcript_data:
+                transcript_data[semester_name] = {
+                    "courses": [],
+                    "semester_gpa": 0,
+                    "total_credits": 0,
+                }
+            transcript_data[semester_name]["courses"].append({
+                    "course_code": enrollment.section.course.course_id,
+                    "course_name": enrollment.section.course.course_name,
+                    "credit": enrollment.section.course.credit,
+                    "letter": enrollment.letter_grade or "N/A",
+                    "point": self.get_grade_point(enrollment.letter_grade),
+                    "result": self.get_grade_result(enrollment.letter_grade),
+            })
+        return Response(transcript_data)
+
+    def get_grade_point(self, letter):
+        points = {"AA": 4.0, "BA": 3.5, "BB": 3.0, "BC": 2.5, "CC": 2.0, "CD": 1.5, "DD": 1.0, "FF": 0.0}
+        return points.get(letter, 0.0)
+
+    def get_grade_result(self, letter):
+        result = {"FF": "Kaldı","DD": "Geçti" ,"CD": "Geçti", "CC": "Geçti","BC": "Geçti","BB": "Geçti","BA": "Geçti","AA": "Geçti"}
+        return result.get(letter, "Kaldı")
