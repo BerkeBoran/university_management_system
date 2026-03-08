@@ -6,6 +6,7 @@ import CourseSelection from "./features/student/CourseSelection.jsx";
 import CourseStudentsPage from './features/instructor/CourseStudentsPage';
 import Calendar from "./features/student/Calendar.jsx";
 import CourseGrade from "./features/student/CourseGrade.jsx";
+import Transcript from "./features/student/Transcript.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/instructor/course/:id/students" element={<CourseStudentsPage />} />
         <Route path="/StudentDashboard/Calendar/" element={<Calendar/>}/>
         <Route path="/grades/" element={<CourseGrade/>}/>
+        <Route path="/transcript/" element={<Transcript/>}/>
       </Routes>
     </Router>
   );

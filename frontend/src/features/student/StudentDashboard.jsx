@@ -53,6 +53,8 @@ if (loading) return (
           </Link>
           <Link to="./Calendar" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Takvim
           </Link>
+           <Link to="/transcript" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Transcript
+          </Link>
         </nav>
       </aside>
 
