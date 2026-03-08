@@ -7,6 +7,8 @@ import CourseStudentsPage from './features/instructor/CourseStudentsPage';
 import Calendar from "./features/student/Calendar.jsx";
 import CourseGrade from "./features/student/CourseGrade.jsx";
 import Transcript from "./features/student/Transcript.jsx";
+import Settings from "./features/student/Settings.jsx";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/StudentDashboard/Calendar/" element={<Calendar/>}/>
         <Route path="/grades/" element={<CourseGrade/>}/>
         <Route path="/transcript/" element={<Transcript/>}/>
+        <Route path="/settings/" element={<Settings/>}/>
+
       </Routes>
     </Router>
   );
