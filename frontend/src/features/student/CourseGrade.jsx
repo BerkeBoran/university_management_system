@@ -55,6 +55,13 @@ const CourseGrade = () => {
                   {grade.final ?? "-"}
                 </span>
               </div>
+              {grade.is_active_makeup_grade && (
+               <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                <span className="text-sm text-gray-600 font-medium">Bütünleme</span>
+                <span className={`text-sm font-bold ${grade.makeup === null ? 'text-gray-400' : 'text-indigo-600'}`}>
+                  {grade.makeup ?? "-"}
+                </span>
+              </div>)}
               <div className="flex justify-between items-center bg-indigo-50 p-2 rounded mt-2">
                   <span className="text-sm text-indigo-700 font-bold">Harf Notu</span>
                   <span className="text-lg font-black text-indigo-900">
