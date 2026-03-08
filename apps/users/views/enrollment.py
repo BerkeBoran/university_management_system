@@ -110,4 +110,4 @@ class TranscriptView(APIView):
 
     def get_grade_result(self, letter):
         result = {"FF": "Kaldı","DD": "Geçti" ,"CD": "Geçti", "CC": "Geçti","BC": "Geçti","BB": "Geçti","BA": "Geçti","AA": "Geçti"}
-        return result.get(letter, "Kaldı")
+        return result.get(letter, "--")
