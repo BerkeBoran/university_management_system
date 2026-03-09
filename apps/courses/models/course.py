@@ -12,6 +12,13 @@ class Course(models.Model):
     is_deleted = models.BooleanField(default = False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
+    prerequisites = models.ManyToManyField(
+        'self',
+        symmetrical = False,
+        related_name = 'is_prerequisites',
+        blank = True,
+    )
+
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
 

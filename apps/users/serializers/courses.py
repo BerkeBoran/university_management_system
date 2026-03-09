@@ -39,9 +39,14 @@ class CourseSerializer(serializers.ModelSerializer):
     department_name = serializers.ReadOnlyField(source='sections.first.department.department')
     capacity = serializers.ReadOnlyField(source='sections.first.capacity')
     course_name = serializers.CharField(source='course.course_name', read_only=True)
+    prerequisites = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='course_id'
+    )
     class Meta:
         model = Course
-        fields = ['id','course_name','course_id','credit','ects','department_name','capacity','sections']
+        fields = ['id','course_name','course_id','credit','ects','department_name','capacity','sections','prerequisites']
 
 
 class InstructorCourseSerializer(serializers.ModelSerializer):

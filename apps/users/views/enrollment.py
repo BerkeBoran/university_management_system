@@ -11,6 +11,7 @@ from apps.courses.permission import IsStudent
 from apps.courses.models.section import Section
 from apps.courses.models.enrollment import Enrollment
 from apps.users.serializers import EnrollCourseSerializer
+from apps.courses.logic.validation import check_prerequisites
 
 
 class EnrollCourseView(APIView):
@@ -20,12 +21,13 @@ class EnrollCourseView(APIView):
     def post(self, request):
         course_id = request.data.get('course_id')
         section_id = request.data.get('section_id')
+        target_course = Course.objects.get(id=course_id)
         student = request.user.student
 
 
         try:
             settings = SystemSettings.objects.get(id=1)
-            with (transaction.atomic()):
+            with ((transaction.atomic())):
                 section = Section.objects.prefetch_related('course','course_time').get(id=section_id)
                 course = section.course
 
@@ -44,16 +46,23 @@ class EnrollCourseView(APIView):
                         return Response({"error": "Dersin Kontenjanı dolmuştur."}, status=status.HTTP_403_FORBIDDEN)
                     new_course_time = section.course_time
 
-                    current_courses = student.courses.all()
+                    current_enrollments = Enrollment.objects.filter(student = student).select_related('section')
 
-                    for current_course in current_courses:
-                        current_time = current_course.course_time
+                    for enrollment in current_enrollments:
+                        current_time = enrollment.section.course_time
+
 
                         if current_time:
                             if current_time.course_days == new_course_time.course_days:
                                 if (current_time.course_start_time < new_course_time.course_end_time) and (
                                         current_time.course_end_time > new_course_time.course_start_time):
                                     return Response({"error": "Saat Çakışması"}, status=status.HTTP_400_BAD_REQUEST)
+                    is_eligible, message = check_prerequisites(student, target_course)
+
+                    if not is_eligible:
+                        # Eğer önkoşul sağlanmıyorsa 400 Hatası dön ve sebebi açıkla
+                        return Response({"detail": message}, status=status.HTTP_400_BAD_REQUEST)
+
                     enrollment = Enrollment.objects.create(
                         student=student,
                         section=section,
