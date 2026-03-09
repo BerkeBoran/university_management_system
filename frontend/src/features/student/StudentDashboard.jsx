@@ -55,6 +55,8 @@ if (loading) return (
           </Link>
            <Link to="/transcript" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Transcript
           </Link>
+          <Link to="/curriculum"className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Müfredat
+          </Link>
         </nav>
       </aside>
 

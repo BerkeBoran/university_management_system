@@ -9,6 +9,7 @@ import CourseGrade from "./features/student/CourseGrade.jsx";
 import Transcript from "./features/student/Transcript.jsx";
 import Settings from "./features/student/Settings.jsx";
 import 'react-toastify/dist/ReactToastify.css';
+import Curriculum from "./features/student/Curriculum.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/grades/" element={<CourseGrade/>}/>
         <Route path="/transcript/" element={<Transcript/>}/>
         <Route path="/settings/" element={<Settings/>}/>
+        <Route path="/curriculum/" element={<Curriculum/>}/>
 
       </Routes>
     </Router>
