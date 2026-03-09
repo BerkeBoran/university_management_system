@@ -27,7 +27,8 @@ class Question(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.question_title}: {self.author.full_name}"
+        author_name = f"{self.author.first_name} {self.author.last_name}"
+        return f"{self.question_title}: {author_name}"
 
 
 
@@ -53,4 +54,5 @@ class Answer(models.Model):
         ordering = ['-is_accepted','-upvotes','-created_at']
 
     def __str__(self):
-        return f"{self.answer_text}: {self.author.full_name}"
+        author_name = f"{self.author.first_name} {self.author.last_name}"
+        return f"{self.answer_text}: {author_name}"
