@@ -60,7 +60,6 @@ class EnrollCourseView(APIView):
                     is_eligible, message = check_prerequisites(student, target_course)
 
                     if not is_eligible:
-                        # Eğer önkoşul sağlanmıyorsa 400 Hatası dön ve sebebi açıkla
                         return Response({"detail": message}, status=status.HTTP_400_BAD_REQUEST)
 
                     enrollment = Enrollment.objects.create(
@@ -84,6 +83,7 @@ class EnrollCourseView(APIView):
 class TranscriptView(APIView):
     permission_classes = [IsAuthenticated,IsStudent]
 
+
     def get(self,request):
         user = request.user
 
@@ -94,15 +94,22 @@ class TranscriptView(APIView):
 
         transcript_data = {}
 
+        total_points = 0
+        total_credits = 0
+
         for enrollment in enrollments:
+
             semester_name = f"{enrollment.section.grade} - {enrollment.section.semester.semester}"
 
             if semester_name not in transcript_data:
                 transcript_data[semester_name] = {
                     "courses": [],
+                    "semester_points": 0,
+                    "semester_credits": 0,
                     "semester_gpa": 0,
-                    "total_credits": 0,
+                    "total_gpa": 0,
                 }
+
             transcript_data[semester_name]["courses"].append({
                     "course_code": enrollment.section.course.course_id,
                     "course_name": enrollment.section.course.course_name,
@@ -111,6 +118,29 @@ class TranscriptView(APIView):
                     "point": self.get_grade_point(enrollment.letter_grade),
                     "result": self.get_grade_result(enrollment.letter_grade),
             })
+            current_point = self.get_grade_point(enrollment.letter_grade)
+            current_credit = enrollment.section.course.credit
+
+            if current_point is not None:
+                transcript_data[semester_name]["semester_points"] += (current_point * current_credit)
+                transcript_data[semester_name]["semester_credits"] += current_credit
+
+                total_points += (current_point * current_credit)
+                total_credits += current_credit
+
+            for sem_name, sem_data in transcript_data.items():
+                if sem_data["semester_credits"] > 0:
+                    sem_data["semester_gpa"] = round(sem_data["semester_points"] / sem_data["semester_credits"], 2)
+
+        overall_agno = 0
+        if total_credits > 0:
+            overall_agno = round(total_points / total_credits, 2)
+
+        transcript_data["summary"] = {
+            "overall_gpa": overall_agno,
+            "total_credits": total_credits,
+            "is_summary": True,
+        }
         return Response(transcript_data)
 
     def get_grade_point(self, letter):
