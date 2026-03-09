@@ -6,6 +6,7 @@ from apps.courses.views import AvaliableCoursesView, InstructorCourseDetailView,
 from apps.courses.views.scheduler import CourseDeleteView, SectionListView, InstructorCourseListView
 from apps.courses.views.academic_management import ClassroomViewSet,CourseTimeViewSet,SemesterViewSet,GradeViewSet, DepartmentViewSet
 from apps.courses.views.enrollment_grade import EnrollmentGradeView, StudentGradeView
+from apps.courses.views.curriculum import StudentCurriculumView
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='questions')
@@ -29,5 +30,6 @@ urlpatterns = [
     path('enrollment-grade/<int:enrollment_grade_id>/',EnrollmentGradeView.as_view(), name='EnrollmentGrade'),
     path('section-list/', SectionListView.as_view(), name='section_list'),
     path('student-grade/',StudentGradeView.as_view(), name='student_grade'),
+    path('curriculum/',StudentCurriculumView.as_view(), name='curriculum'),
 
 ]

@@ -2,6 +2,7 @@ from django.contrib import admin
 from apps.courses.models.course import Course
 from apps.courses.models.enrollment import Enrollment
 from apps.courses.models.section import Section,Semester, Classroom, CourseTime, Grade, Department
+from apps.courses.models.curriculum import Curriculum,CurriculumDetail
 
 
 @admin.register(Classroom)
@@ -36,3 +37,13 @@ class EnrollmentAdmin(admin.ModelAdmin):
 @admin.register(Section)
 class SectionAdmin(admin.ModelAdmin):
     list_display = ("course","semester","classroom","instructor","capacity","course_time")
+
+class CurriculumDetailInline(admin.TabularInline):
+    model = CurriculumDetail
+    extra = 8
+
+@admin.register(Curriculum)
+class CurriculumAdmin(admin.ModelAdmin):
+    inlines = [CurriculumDetailInline]
+    list_display = ('department', 'year')
+    list_filter = ('department', 'year')
