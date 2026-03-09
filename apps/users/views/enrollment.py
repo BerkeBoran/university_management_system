@@ -95,7 +95,7 @@ class TranscriptView(APIView):
         transcript_data = {}
 
         for enrollment in enrollments:
-            semester_name = f"{enrollment.section.semester.year} - {enrollment.section.semester.semester}"
+            semester_name = f"{enrollment.section.grade} - {enrollment.section.semester.semester}"
 
             if semester_name not in transcript_data:
                 transcript_data[semester_name] = {
