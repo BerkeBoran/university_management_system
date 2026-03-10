@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.courses.models.forum import Answer, Question
-from apps.courses.permission import IsTeacherOrQuestionAuthor
+from apps.courses.permission import IsTeacherOrQuestionAuthor, IsTeacherOrAnswerAuthorOrQuestionAuthor
 from apps.users.serializers.forum import AnswerSerializer, QuestionSerializer
 from apps.courses.models import Course
 from apps.users.serializers import CourseSerializer
@@ -57,6 +57,11 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author = self.request.user)
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update','destroy']:
+            return [IsTeacherOrAnswerAuthorOrQuestionAuthor()]
+        return [IsAuthenticated()]
 
 class ForumCourseListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

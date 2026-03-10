@@ -20,6 +20,19 @@ class IsTeacherOrQuestionAuthor(permissions.BasePermission):
 
         return is_course_teacher or is_question_author
 
+class IsTeacherOrAnswerAuthorOrQuestionAuthor(permissions.BasePermission):
+        def has_object_permission(self, request, view, obj):
+            if request.method in permissions.SAFE_METHODS:
+                return True
+
+            is_question_author = obj.question.author == request.user
+            is_answer_author = obj.author == request.user
+            user_role = str(getattr(request.user, 'user_role', '')).lower()
+            if user_role == 'instructor':
+                return True
+
+            return  is_question_author or is_answer_author
+
 
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request,view):
