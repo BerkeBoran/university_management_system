@@ -1,2 +1,2 @@
 from .forum import QuestionViewSet,AnswerViewSet
-from .scheduler import VisualCalendarView,AvaliableCoursesView,InstructorCourseDetailView
+from .scheduler import VisualCalendarView,AvaliableCoursesView

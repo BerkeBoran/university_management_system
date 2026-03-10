@@ -1,14 +1,16 @@
-from rest_framework import status, generics
+from rest_framework import status, generics, viewsets
 from rest_framework.generics import DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 
 from apps.courses.models import Course
 from apps.users.serializers.courses import InstructorCourseSerializer, CourseSerializer, SectionSerializer
 from apps.courses.models import Section
 from apps.courses.models import Enrollment
 from apps.courses.permission import IsTeacher
+from apps.users.serializers.users import EnrolledStudentSerializer
 
 
 class SectionListView(generics.ListAPIView):
@@ -59,22 +61,32 @@ class InstructorCourseListView(generics.ListAPIView):
                 is_deleted=False)
         return Section.objects.none()
 
-
-class InstructorCourseDetailView(generics.RetrieveAPIView):
+class InstructorCourseViewSet(viewsets.ModelViewSet):
     serializer_class = InstructorCourseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsTeacher]
 
     def get_queryset(self):
         user = self.request.user
         if hasattr(user, 'instructor'):
             instructor = user.instructor
             return Section.objects.filter(
-                instructor = instructor,
-                department__department = instructor.department,
-                semester__is_active = True,
-                is_deleted = False,
-            )
+                instructor=instructor,
+                semester__is_active=True,
+                department__department=instructor.department,
+                is_deleted=False)
         return Section.objects.none()
+
+    @action(detail=True, methods=['get'])
+    def students(self, request, pk=None):
+
+        section = self.get_object()
+        enrollments = Enrollment.objects.filter(section = section).select_related('student')
+
+        students = [enrollment.student for enrollment in enrollments]
+        serializer = EnrolledStudentSerializer(students, many=True)
+
+        return Response(serializer.data)
+
 
 
 class VisualCalendarView(APIView):
