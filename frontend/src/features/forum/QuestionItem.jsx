@@ -5,6 +5,9 @@ import NewAnswerForm from "./NewAnswerForm";
 
 const QuestionItem = ({ question, refresh }) => {
   const [answers, setAnswers] = useState([]);
+  const currentUserId = localStorage.getItem("user_id")
+  const userRole = localStorage.getItem("user_role")
+  const canDelete = userRole === 'instructor' || question.author == currentUserId;
 
  const fetchAnswers = async () => {
   const token = localStorage.getItem("access");
@@ -54,7 +57,8 @@ const QuestionItem = ({ question, refresh }) => {
       <h4>Title:{question.question_title}</h4>
       <p>Text:{question.question_text}</p>
       <small>Soran: {question.author_name}</small><p></p>
-      <button onClick={handleDelete}>Delete</button>
+        {canDelete && (
+      <button onClick={handleDelete}>Delete</button>)}
 
 
       <AnswerList answers={answers} />
