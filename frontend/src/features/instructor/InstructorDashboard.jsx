@@ -62,7 +62,7 @@ useEffect(() => {
         {isMenuOpen && (
           <div className="absolute top-16 left-4 w-64 bg-white shadow-2xl rounded-xl border border-slate-200 p-2 text-slate-800 animate-in fade-in zoom-in duration-200">
             <nav className="flex flex-col gap-1">
-              <Link to="/InstructorDashboard" className="flex items-center gap-3 p-3 bg-slate-100 text-blue-700 rounded-lg font-semibold">
+              <Link to="/InstructorCourses/" className="flex items-center gap-3 p-3 bg-slate-100 text-blue-700 rounded-lg font-semibold">
                 <span>📂 Derslerim</span>
               </Link>
               <button className="flex items-center gap-3 p-3 hover:bg-slate-50 text-slate-600 rounded-lg transition">
