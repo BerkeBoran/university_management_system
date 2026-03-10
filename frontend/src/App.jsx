@@ -11,23 +11,25 @@ import Transcript from "./features/student/Transcript.jsx";
 import Settings from "./features/student/Settings.jsx";
 import 'react-toastify/dist/ReactToastify.css';
 import Curriculum from "./features/student/Curriculum.jsx";
+import Layout from "./components/layout/Layout";
+
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/CourseSelection" element={<CourseSelection/>} />
+        <Route path="/CourseSelection" element={<Layout><CourseSelection/></Layout>} />
         <Route path="/login/:role" element={<LoginPage />} />
-        <Route path="/InstructorDashboard"  element={<InstructorDashboard/>} />
-        <Route path="/StudentDashboard"  element={<StudentDashboard/>} />
-        <Route path="/StudentDashboard/Calendar/" element={<Calendar/>}/>
-        <Route path="/grades/" element={<CourseGrade/>}/>
-        <Route path="/transcript/" element={<Transcript/>}/>
-        <Route path="/settings/" element={<Settings/>}/>
-        <Route path="/curriculum/" element={<Curriculum/>}/>
-        <Route path="/InstructorCourses/:id" element={<CourseStudentsPage/>}/>
-        <Route path="/InstructorCourses" element={<InstructorCoursesPage />} />
+        <Route path="/InstructorDashboard"  element={<Layout><InstructorDashboard /></Layout>} />
+        <Route path="/StudentDashboard"  element={<Layout><StudentDashboard/></Layout>} />
+        <Route path="/StudentDashboard/Calendar/" element={<Layout><Calendar/></Layout>} />
+        <Route path="/grades/" element={<Layout><CourseGrade/></Layout>} />
+        <Route path="/transcript/" element={<Layout><Transcript/></Layout>} />
+        <Route path="/settings/" element={<Layout><Settings/></Layout>} />
+        <Route path="/curriculum/" element={<Layout><Curriculum/></Layout>} />
+        <Route path="/InstructorCourses/:id" element={<Layout><CourseStudentsPage/></Layout>} />
+        <Route path="/InstructorCourses" element={<Layout><InstructorCoursesPage/></Layout>} />
 
       </Routes>
     </Router>
