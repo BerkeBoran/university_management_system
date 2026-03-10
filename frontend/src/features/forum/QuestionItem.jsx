@@ -61,7 +61,7 @@ const QuestionItem = ({ question, refresh }) => {
       <button onClick={handleDelete}>Delete</button>)}
 
 
-      <AnswerList answers={answers} />
+      <AnswerList answers={answers} refresh={fetchAnswers} questionAuthorId={question.author} />
       <NewAnswerForm questionId={question.id} onAdded={fetchAnswers} />
     </div>
   );
