@@ -38,7 +38,6 @@ class CourseSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True, read_only=True)
     department_name = serializers.ReadOnlyField(source='sections.first.department.department')
     capacity = serializers.ReadOnlyField(source='sections.first.capacity')
-    course_name = serializers.CharField(source='course.course_name', read_only=True)
     prerequisites = serializers.SlugRelatedField(
         many=True,
         read_only=True,
