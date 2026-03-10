@@ -31,6 +31,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username
         data['full_name'] = f"{self.user.first_name} {self.user.last_name}"
         data['role'] = self.user.role
+        data['user_id'] = self.user.id
         if self.user.role == 'Instructor':
             data['title'] = self.user.instructor.get_title_display()
         else:
