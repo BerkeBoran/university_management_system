@@ -56,6 +56,10 @@ const sidebarStyle = {
               <Link to="/settings/" style={navItemStyle(isActive("/settings/"))}>
               <i className="bi bi-file-earmark-text-fill"></i>Ayarlar</Link>
             </li>
+               <li className="mb-2">
+              <Link to="/forum/" style={navItemStyle(isActive("/forum/"))}>
+              <i className="bi bi-file-earmark-text-fill"></i>Forum</Link>
+            </li>
           </>
         )}
 
@@ -88,6 +92,10 @@ const sidebarStyle = {
               <li className="mb-2">
               <Link to="/settings/" style={navItemStyle(isActive("/settings/"))}>
               <i className="bi bi-file-earmark-text-fill"></i>Ayarlar</Link>
+            </li>
+              <li className="mb-2">
+              <Link to="/forum/" style={navItemStyle(isActive("/forum/"))}>
+              <i className="bi bi-file-earmark-text-fill"></i>Forum</Link>
             </li>
           </>
         )}

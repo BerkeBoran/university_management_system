@@ -12,6 +12,10 @@ import Settings from "./features/student/Settings.jsx";
 import 'react-toastify/dist/ReactToastify.css';
 import Curriculum from "./features/student/Curriculum.jsx";
 import Layout from "./components/layout/Layout";
+import ForumPage from "./features/forum/ForumPage";
+import ForumHome from "./features/forum/ForumHome";
+
+
 
 
 function App() {
@@ -30,6 +34,9 @@ function App() {
         <Route path="/curriculum/" element={<Layout><Curriculum/></Layout>} />
         <Route path="/InstructorCourses/:id" element={<Layout><CourseStudentsPage/></Layout>} />
         <Route path="/InstructorCourses" element={<Layout><InstructorCoursesPage/></Layout>} />
+        <Route path="/forum/:id" element={<Layout><ForumPage/></Layout>} />
+        <Route path="/forum/" element={<Layout><ForumHome/></Layout>} />
+
 
       </Routes>
     </Router>
