@@ -60,6 +60,16 @@ const QuestionItem = ({ question, refresh }) => {
         {canDelete && (
       <button onClick={handleDelete}>Delete</button>)}
 
+        {question.is_resolved ? (
+            <span className="badge bg-success">
+              <i className="bi bi-check-circle-fill me-1"></i> Çözüldü
+            </span>
+          ) : (
+            <span className="badge bg-warning text-dark">
+              <i className="bi bi-clock-history me-1"></i> Çözüm Bekleniyor
+            </span>
+          )}
+
 
       <AnswerList answers={answers} refresh={fetchAnswers} questionAuthorId={question.author} />
       <NewAnswerForm questionId={question.id} onAdded={fetchAnswers} />
