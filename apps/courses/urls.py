@@ -29,7 +29,6 @@ urlpatterns = [
     path('calendar/', VisualCalendarView.as_view(), name='visual_calendar'),
     path('course-delete/<int:pk>/', CourseDeleteView.as_view(), name='CourseDelete'),
     path('enrollment-grade/',EnrollmentGradeView.as_view(), name='enrollment_grade'),
-    path('enrollment-grade/<int:enrollment_grade_id>/',EnrollmentGradeView.as_view(), name='EnrollmentGrade'),
     path('section-list/', SectionListView.as_view(), name='section_list'),
     path('student-grade/',StudentGradeView.as_view(), name='student_grade'),
     path('curriculum/',StudentCurriculumView.as_view(), name='curriculum'),

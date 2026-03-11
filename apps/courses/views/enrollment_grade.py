@@ -13,11 +13,13 @@ class EnrollmentGradeView(APIView):
     permission_classes = [IsAuthenticated,IsTeacher]
 
     def get(self, request):
-        enrollments = Enrollment.objects.all()
+        course_id = request.query_params.get('course_id')
+        enrollments = Enrollment.objects.filter(section__id=course_id,section__instructor=request.user)
 
         data = []
         for enrollment in enrollments:
             data.append({
+                "enrollment_id": enrollment.id,
                 "course_id": f"{enrollment.section.course_id}",
                 "student_id": f"{enrollment.student.id}",
                 "student_name": f"{enrollment.student.first_name} {enrollment.student.last_name}",
@@ -31,20 +33,20 @@ class EnrollmentGradeView(APIView):
         return Response(data)
 
     def patch(self, request, ):
+        student_no = request.data.get('student_no')
         course_id = request.data.get('course_id')
-        student_id = request.data.get('enrollment_grade_id')
         midterm = request.data.get('midterm_grade')
         final = request.data.get('final_grade')
         makeup = request.data.get('makeup_grade')
 
         try:
-            enrollment = Enrollment.objects.get(student_id=student_id, section__course__id=course_id)
+            enrollment = Enrollment.objects.get(section__id=course_id,student__id=student_no,section__instructor=request.user)
         except Enrollment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        enrollment.midterm_grade = midterm
-        enrollment.final_grade = final
-        enrollment.makeup_grade = makeup
+        if midterm is not None:enrollment.midterm_grade = midterm
+        if final is not None:enrollment.final_grade = final
+        if makeup is not None:enrollment.makeup_grade = makeup
 
         enrollment.save()
 

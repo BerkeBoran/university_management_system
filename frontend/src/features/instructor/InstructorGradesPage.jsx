@@ -163,19 +163,32 @@ const InstructorGradesPage = () => {
                         )}
                       </td>
                       <td style={styles.td}>
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={grades[enrollment.student_id] ?? ''}
-                          onChange={(e) => handleGradeChange(enrollment.student_id, e.target.value)}
-                          placeholder="0–100"
-                          style={{
-                            ...styles.input,
-                            borderColor: changed ? accentColor : '#cbd5e1',
-                            boxShadow: changed ? `0 0 0 2px ${accentColor}33` : 'none',
-                          }}
-                        />
+                        {selectedExam.key === 'makeup' && !enrollment.is_active_makeup_grade ? (
+                          <span style={{
+                            fontSize: 12, fontWeight: 600,
+                            color: '#94a3b8',
+                            background: '#f1f5f9',
+                            border: '1px solid #e2e8f0',
+                            padding: '4px 12px',
+                            borderRadius: 8,
+                          }}>
+                            Hak Yok
+                          </span>
+                        ) : (
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                            value={grades[enrollment.student_id] ?? ''}
+                            onChange={(e) => handleGradeChange(enrollment.student_id, e.target.value)}
+                            placeholder="0–100"
+                            style={{
+                              ...styles.input,
+                              borderColor: changed ? accentColor : '#cbd5e1',
+                              boxShadow: changed ? `0 0 0 2px ${accentColor}33` : 'none',
+                            }}
+                          />
+                        )}
                       </td>
                     </tr>
                   );
