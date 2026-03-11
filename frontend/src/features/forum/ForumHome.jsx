@@ -24,7 +24,6 @@ const ForumHome = () => {
   fetchCourses();
 }, []);
 
- // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
 return (
   <>

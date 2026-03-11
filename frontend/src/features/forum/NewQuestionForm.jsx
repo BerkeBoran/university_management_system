@@ -37,7 +37,6 @@ const NewQuestionForm = ({ id, onAdded }) => {
     console.log("Body:", body);
   }
 };
-  // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
 return (
   <>

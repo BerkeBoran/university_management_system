@@ -45,7 +45,6 @@ const NewAnswerForm = ({ questionId, onAdded }) => {
     }
   };
 
-  // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
   return (
       <>

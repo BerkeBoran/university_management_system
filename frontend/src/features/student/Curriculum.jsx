@@ -32,7 +32,6 @@ const Curriculum = () => {
         }
     };
 
-    // Mevcut import, hook ve state'lerini bu dosyanın üstüne ekle.
 
 if (loading) return (
   <div style={{

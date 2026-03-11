@@ -19,7 +19,6 @@ const WeeklyCalendar = () => {
     fetchCalendar();
   }, []);
 
-  // Mevcut import, hook ve state'lerini bu dosyanın üstüne ekle.
 
 if (!calendarData) return (
   <div style={{

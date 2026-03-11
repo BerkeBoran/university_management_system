@@ -29,7 +29,6 @@ const ForumPage = () => {
     fetchQuestions();
   }, [id]);
 
-  // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
   if (loading) return (
       <div style={{

@@ -50,54 +50,169 @@ const LoginPage = () => {
   }
 };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Üniversite Sistemi</h2>
 
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+return (
+  <>
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+      .lp-wrap * { box-sizing: border-box; }
+      .lp-wrap {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        min-height: 100vh;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .lp-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 4px 24px #0f172a0a;
+      }
+
+      .lp-logo {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -.5px;
+        margin-bottom: 6px;
+      }
+      .lp-logo span { color: #3b82f6; }
+      .lp-tagline {
+        text-align: center;
+        font-size: 13px;
+        color: #94a3b8;
+        font-weight: 500;
+        margin-bottom: 28px;
+      }
+
+      /* Role toggle */
+      .lp-toggle {
+        display: flex;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 4px;
+        margin-bottom: 24px;
+        gap: 4px;
+      }
+      .lp-toggle-btn {
+        flex: 1;
+        padding: 9px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        cursor: pointer;
+        transition: all .15s;
+        background: transparent;
+        color: #64748b;
+      }
+      .lp-toggle-btn.active {
+        background: #fff;
+        color: #1d4ed8;
+        box-shadow: 0 1px 4px #0f172a14;
+      }
+
+      /* Form fields */
+      .lp-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+      .lp-label { font-size: 12px; font-weight: 700; color: #475569; }
+      .lp-input {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 14px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #1e293b;
+        background: #f8fafc;
+        outline: none;
+        transition: border-color .15s, background .15s;
+      }
+      .lp-input:focus { border-color: #3b82f6; background: #fff; }
+      .lp-input::placeholder { color: #cbd5e1; }
+
+      /* Submit */
+      .lp-btn {
+        width: 100%;
+        padding: 12px;
+        background: #1d4ed8;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: background .15s;
+      }
+      .lp-btn:hover { background: #1e40af; }
+      .lp-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+    `}</style>
+
+    <div className="lp-wrap">
+      <div className="lp-card">
+
+        <div className="lp-logo">Üniversite Yönetim Sistemi</div>
+        {/* Role toggle */}
+        <div className="lp-toggle">
           <button
+            className={`lp-toggle-btn${role === 'student' ? ' active' : ''}`}
             onClick={() => setRole('student')}
-            className={`flex-1 py-2 rounded-md transition ${role === 'student' ? 'bg-blue-600 text-white shadow' : 'text-gray-600'}`}
+            type="button"
           >
             Öğrenci
           </button>
           <button
+            className={`lp-toggle-btn${role === 'instructor' ? ' active' : ''}`}
             onClick={() => setRole('instructor')}
-            className={`flex-1 py-2 rounded-md transition ${role === 'instructor' ? 'bg-blue-600 text-white shadow' : 'text-gray-600'}`}
+            type="button"
           >
             Akademisyen
           </button>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı / No</label>
+        {/* Form */}
+        <div>
+          <div className="lp-field">
+            <label className="lp-label">Kullanıcı Adı / No</label>
             <input
-              type="text" required
-              className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="lp-input"
+              type="text"
+              required
+              placeholder="Kullanıcı adınızı girin"
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Şifre</label>
+
+          <div className="lp-field">
+            <label className="lp-label">Şifre</label>
             <input
-              type="password" required
-              className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="lp-input"
+              type="password"
+              required
+              placeholder="••••••••"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full mt-4"
-            >
+
+          <button className="lp-btn" onClick={handleLogin}>
             Giriş Yap
-        </Button>
-        </form>
+          </button>
+        </div>
+
       </div>
     </div>
-  );
+  </>
+);
 };
 
 export default LoginPage;

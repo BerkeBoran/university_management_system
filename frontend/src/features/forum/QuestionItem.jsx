@@ -52,7 +52,6 @@ const QuestionItem = ({ question, refresh }) => {
       }
     };
 
-  // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
 return (
   <>

@@ -35,7 +35,6 @@ useEffect(() => {
 
   return (
     <div className="p-8 max-w-6xl mx-auto w-full">
-      {/* Başlık */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-black text-slate-800 tracking-tight">
@@ -44,7 +43,6 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Ders Listesi */}
       <div className="grid gap-4">
         {instructorData?.courses?.map(course => (
           <div

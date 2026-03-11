@@ -6,7 +6,6 @@ const AnswerList = ({ answers, refresh, questionAuthorId }) => {
     if (answerArray.length === 0) {
         return <div className="text-muted p-4">Bu ders için henüz cevap yapılmamış.</div>;
     }
- // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
 return (
   <>

@@ -6,7 +6,6 @@ const QuestionList = ({ questions, refresh }) => {
   if (questionArray.length === 0) {
     return <div className="text-muted p-4">Bu ders için henüz soru sorulmamış.</div>;
   }
- // Mevcut import, hook, state ve handler'larını bu dosyanın üstüne ekle.
 
 return (
   <>
