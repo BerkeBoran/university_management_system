@@ -9,104 +9,207 @@ const StudentDashboard = () => {
   const [loading, setLoading] = useState(true)
   const [studentData, setStudentData] = useState(null);
 
-useEffect(() => {
-  if (!token) return;
+  useEffect(() => {
+    if (!token) return;
 
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:8000/api/users/profile/",
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-      setStudentData(res.data);
-    } catch (err) {
-      console.error("Veri çekme hatası:", err.response?.status);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get(
+            "http://localhost:8000/api/users/profile/",
+            {
+              headers: {Authorization: `Bearer ${token}`}
+            }
+        );
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Veri çekme hatası:", err.response?.status);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchProfile();
-}, [token]);
+    fetchProfile();
+  }, [token]);
 
-if (loading) return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
+
+  if (loading) return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '100vh', background: '#f8fafc',
+      }}>
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%',
+          border: '3px solid #e2e8f0',
+          borderTopColor: '#3b82f6',
+          animation: 'spin .8s linear infinite',
+        }}/>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
   );
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <aside className="w-64 bg-white shadow-md hidden md:block">
-        <div className="p-6">
-          <h2 className="text-xl font-bold text-blue-600">UniPort</h2>
-        </div>
-        <nav className="mt-4">
-          <Link to="/dashboard" className="block py-2.5 px-6 bg-blue-50 text-blue-700 border-r-4 border-blue-700 font-medium"> Panelim
-          </Link>
-          <Link to="/CourseSelection" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition"> Ders Seçimi
-          </Link>
-          <Link to="/grades" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Notlarım
-          </Link>
-          <Link to="/settings" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Ayarlar
-          </Link>
-          <Link to="./Calendar" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Takvim
-          </Link>
-           <Link to="/transcript" className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Transcript
-          </Link>
-          <Link to="/curriculum"className="block py-2.5 px-6 text-gray-600 hover:bg-gray-50 transition">Müfredat
-          </Link>
-        </nav>
-      </aside>
+      <>
+        <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-      <main className="flex-1 p-8">
-        <header className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 mb-8 text-white shadow-lg">
-          <h1 className="text-3xl font-bold">Tekrar Hoş Geldin, {fullName}! 👋</h1>
-          <p className="mt-2 text-blue-100">Bölüm: Bilgisayar Mühendisliği | Genel Not Ortalaman: <span className="font-bold text-white">{studentData?.gpa || "0.00"}</span></p>
-        </header>
+      .sd-wrap * { box-sizing: border-box; }
+      .sd-wrap {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: #f1f5f9;
+        min-height: 100vh;
+        padding: 36px 48px;
+        color: #1e293b;
+      }
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 uppercase font-semibold">Kayıtlı Ders</p>
-            <p className="text-2xl font-bold text-gray-800">{studentData?.courses?.length || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 uppercase font-semibold">Toplam AKTS</p>
-            <p className="text-2xl font-bold text-gray-800">
-                {studentData?.courses?.reduce((sum, c) => sum + (c.ects || 0), 0) || 0}
-            </p>
-          </div>
-        </div>
+      /* Top bar */
+      .sd-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      .sd-greeting-label { font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 4px; }
+      .sd-greeting-name  { font-size: 26px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+      .sd-dept-chip {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 999px;
+      }
 
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Aktif Derslerim</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {studentData?.courses?.map((course) => (
-            <div key={course.id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border-l-4 border-blue-500">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{course.course_name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{course.course_id}</p>
-                </div>
-                <span className="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">
-                  {course.ects} AKTS
-                </span>
-              </div>
-              <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
-                <span>Kredi: {course.credit}</span>
-                <button className="text-blue-600 hover:underline font-medium">Detaylara Git</button>
-              </div>
+      /* Stats */
+      .sd-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 36px;
+      }
+      .sd-stat {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px 24px;
+      }
+      .sd-stat-label { font-size: 12px; font-weight: 600; color: #94a3b8; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 8px; }
+      .sd-stat-value { font-size: 30px; font-weight: 800; color: #0f172a; line-height: 1; }
+      .sd-stat-sub   { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+      .sd-stat.accent { background: #1d4ed8; border-color: #1d4ed8; }
+      .sd-stat.accent .sd-stat-label { color: #93c5fd; }
+      .sd-stat.accent .sd-stat-value { color: #fff; }
+      .sd-stat.accent .sd-stat-sub   { color: #93c5fd; }
+
+      /* Section head */
+      .sd-section-head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .sd-section-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+      .sd-section-count { font-size: 12px; color: #94a3b8; font-weight: 600; }
+
+      /* Course rows */
+      .sd-courses { display: flex; flex-direction: column; gap: 10px; }
+      .sd-course-row {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .sd-course-row:hover { border-color: #bfdbfe; box-shadow: 0 2px 12px #3b82f610; }
+      .sd-course-icon {
+        width: 40px; height: 40px;
+        background: #eff6ff;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .sd-course-icon svg { width: 18px; height: 18px; stroke: #3b82f6; }
+      .sd-course-code {
+        font-size: 12px; font-weight: 700; color: #3b82f6;
+        background: #eff6ff; padding: 2px 8px; border-radius: 5px;
+        margin-bottom: 3px; display: inline-block;
+      }
+      .sd-course-name { font-size: 14px; font-weight: 600; color: #1e293b; }
+
+      /* Empty */
+      .sd-empty {
+        padding: 48px; background: #fff;
+        border: 2px dashed #e2e8f0; border-radius: 14px;
+        text-align: center; color: #94a3b8; font-size: 14px;
+      }
+
+      @media (max-width: 640px) { .sd-wrap { padding: 24px 16px; } }
+    `}</style>
+
+        <div className="sd-wrap">
+
+          {/* Top bar */}
+          <div className="sd-topbar">
+            <div>
+              <p className="sd-greeting-label">Hoş geldin 👋</p>
+              <h1 className="sd-greeting-name">{fullName}</h1>
             </div>
-          ))}
-          {studentData?.courses?.length === 0 && (
-            <div className="col-span-full p-12 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl text-center text-gray-500">
-                Henüz ders seçimi yapmadınız.
+            <div className="sd-dept-chip">
+              {studentData?.department || 'Bilgisayar Mühendisliği'}
             </div>
-          )}
+          </div>
+
+          {/* Stats */}
+          <div className="sd-stats">
+            <div className="sd-stat accent">
+              <p className="sd-stat-label">Genel Not Ort.</p>
+              <p className="sd-stat-value">{studentData?.gpa || '0.00'}</p>
+              <p className="sd-stat-sub">GNO</p>
+            </div>
+            <div className="sd-stat">
+              <p className="sd-stat-label">Kayıtlı Ders</p>
+              <p className="sd-stat-value">{studentData?.courses?.length || 0}</p>
+              <p className="sd-stat-sub">bu dönem</p>
+            </div>
+            <div className="sd-stat">
+              <p className="sd-stat-label">Toplam AKTS</p>
+              <p className="sd-stat-value">
+                {studentData?.courses?.reduce((s, c) => s + (c.ects || 0), 0) || 0}
+              </p>
+              <p className="sd-stat-sub">kredi</p>
+            </div>
+          </div>
+
+          {/* Course List */}
+          <div className="sd-section-head">
+            <h2 className="sd-section-title">Aktif Derslerim</h2>
+            <span className="sd-section-count">{studentData?.courses?.length || 0} ders</span>
+          </div>
+
+          <div className="sd-courses">
+            {studentData?.courses?.length > 0 ? (
+                studentData.courses.map((course) => (
+                    <div key={course.id} className="sd-course-row">
+                      <div className="sd-course-icon">
+                        <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8">
+                          <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <span className="sd-course-code">{course.course_id}</span>
+                        <p className="sd-course-name">{course.course_name}</p>
+                      </div>
+                    </div>
+                ))
+            ) : (
+                <div className="sd-empty">Henüz ders seçimi yapmadınız.</div>
+            )}
+          </div>
+
         </div>
-      </main>
-    </div>
+      </>
   );
-};
-
+}
 export default StudentDashboard;

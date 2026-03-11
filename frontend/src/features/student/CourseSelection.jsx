@@ -51,89 +51,220 @@ const CourseSelection = () => {
         }
     };
 
-    if (loading) return <div className="text-center mt-10">Yükleniyor...</div>;
 
-    return (
-        <div className="max-w-6xl mx-auto p-6">
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Ders Seçimi</h2>
 
-            {error && <div className="bg-red-100 text-red-700 p-4 rounded mb-6">{error}</div>}
+if (loading) return (
+  <div style={{
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    height: '100vh', background: '#f1f5f9',
+  }}>
+    <div style={{
+      width: 40, height: 40, borderRadius: '50%',
+      border: '3px solid #e2e8f0',
+      borderTopColor: '#3b82f6',
+      animation: 'spin .8s linear infinite',
+    }} />
+    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  </div>
+);
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {courses.map((course) => (
-                    <div key={course.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow">
-                        <div className="p-6">
-                            <div className="flex justify-between items-start mb-4">
-                                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    {course.department_name || 'Genel'}
-                                </span>
-                                <span className="text-gray-500 text-sm font-medium">
-                                    {course.ects} AKTS
-                                </span>
-                                 <span className="text-gray-500 text-sm font-medium">
-                                    {selectedSections[course.id] ? (
-                                        (() => {
-                                            const selectedSec = course.sections.find(
-                                                (s) => s.id.toString() === selectedSections[course.id].toString()
-                                            );
-                                            return selectedSec
-                                                ? `${selectedSec.remaining_capacity ?? '0'} / ${selectedSec.capacity ?? course.capacity} Kontenjan`
-                                                : `${course.capacity} Toplam Kapenjan`;
-                                        })()
-                                    ) : (
-                                        `Toplam: ${course.capacity} Kontenjan`
-                                    )}
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                {course.sections[0]?.course_name || "İsimsiz Ders"}
-                            </h3>
-                            <p className="text-gray-600 text-sm mb-4">
-                                {course.sections[0]?.course_detail || "Açıklama mevcut değil."}
-                            </p>
-                            <div className="flex items-center justify-between mt-6">
-                                <div className="text-sm text-gray-500">
-                                    Kod: <span className="font-mono font-bold text-gray-700">{course.course_id}</span>
-                                </div>
-                                <div className="mt-4">
-                                    <label className="block text-xs font-medium text-gray-500 mb-1">Şube Seçiniz:</label>
-                                    <select
-                                        className="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                        value={selectedSections[course.id] || ""}
-                                        onChange={(e) => handleSectionChange(course.id, e.target.value)}
-                                    >
-                                        <option value="">Lütfen seçin...</option>
+return (
+  <>
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-                                        {course.sections && course.sections.length > 0 ? (
-                                            course.sections.map((sec) => (
-                                                <option key={sec.id} value={sec.id}>
-                                                     Instructor: {sec.instructor} --  Day: {sec.course_days} -- Start Time: {sec.course_start_time.slice(0,5)} -- End Time:{sec.course_end_time.slice(0,5)}
-                                                </option>
-                                            ))
-                                        ) : (
-                                            <option disabled>Şube bulunamadı</option>
-                                        )}
-                                    </select>
-                                </div>
+      .cs-wrap * { box-sizing: border-box; }
+      .cs-wrap {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: #f1f5f9;
+        min-height: 100vh;
+        padding: 36px 48px;
+        color: #1e293b;
+      }
 
-                                <button
-                                    onClick={() => handleEnroll(course.id)}
-                                    disabled={enrollingId === course.id}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                                        enrollingId === course.id
-                                            ? 'bg-gray-300 cursor-not-allowed'
-                                            : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                    }`}
-                                >
-                                    {enrollingId === course.id ? 'Kaydediliyor...' : 'Kayıt Ol'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+      /* Page header */
+      .cs-header { margin-bottom: 28px; }
+      .cs-title { font-size: 26px; font-weight: 800; color: #0f172a; }
+      .cs-subtitle { font-size: 13px; color: #64748b; font-weight: 500; margin-top: 4px; }
+
+      /* Error */
+      .cs-error {
+        background: #fef2f2; border: 1px solid #fecaca;
+        color: #b91c1c; font-size: 13px; font-weight: 500;
+        padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;
+      }
+
+      /* Grid */
+      .cs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
+      }
+
+      /* Card */
+      .cs-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .cs-card:hover { border-color: #bfdbfe; box-shadow: 0 2px 16px #3b82f612; }
+
+      /* Card top row */
+      .cs-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+      .cs-dept-badge {
+        background: #eff6ff; color: #1d4ed8;
+        font-size: 11px; font-weight: 700;
+        padding: 3px 10px; border-radius: 999px;
+        letter-spacing: .3px;
+      }
+      .cs-meta { display: flex; gap: 8px; align-items: center; }
+      .cs-ects {
+        background: #f8fafc; border: 1px solid #e2e8f0;
+        color: #475569; font-size: 11px; font-weight: 600;
+        padding: 3px 10px; border-radius: 999px;
+      }
+      .cs-capacity {
+        background: #f0fdf4; border: 1px solid #bbf7d0;
+        color: #15803d; font-size: 11px; font-weight: 600;
+        padding: 3px 10px; border-radius: 999px;
+      }
+
+      /* Course info */
+      .cs-course-code {
+        display: inline-block;
+        font-size: 11px; font-weight: 700; color: #3b82f6;
+        background: #eff6ff; padding: 2px 8px; border-radius: 5px;
+        margin-bottom: 4px;
+      }
+      .cs-course-name { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.3; }
+      .cs-course-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+      /* Section select */
+      .cs-select-wrap {}
+      .cs-select-label { font-size: 11px; font-weight: 600; color: #94a3b8; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px; }
+      .cs-select {
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #1e293b;
+        background: #f8fafc;
+        outline: none;
+        cursor: pointer;
+        transition: border-color .15s;
+      }
+      .cs-select:focus { border-color: #3b82f6; background: #fff; }
+
+      /* Enroll button */
+      .cs-btn {
+        width: 100%;
+        padding: 11px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        border: none;
+        cursor: pointer;
+        transition: background .15s, opacity .15s;
+        background: #1d4ed8;
+        color: #fff;
+        margin-top: 2px;
+      }
+      .cs-btn:hover:not(:disabled) { background: #1e40af; }
+      .cs-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+
+      @media (max-width: 640px) { .cs-wrap { padding: 24px 16px; } }
+    `}</style>
+
+    <div className="cs-wrap">
+
+      {/* Header */}
+      <div className="cs-header">
+        <h1 className="cs-title">Ders Seçimi</h1>
+        <p className="cs-subtitle">{courses.length} ders mevcut</p>
+      </div>
+
+      {/* Error */}
+      {error && <div className="cs-error">{error}</div>}
+
+      {/* Grid */}
+      <div className="cs-grid">
+        {courses.map((course) => {
+          const selectedSec = course.sections?.find(
+            (s) => s.id.toString() === (selectedSections[course.id] || '').toString()
+          );
+          const capacityText = selectedSec
+            ? `${selectedSec.remaining_capacity ?? 0} / ${selectedSec.capacity ?? course.capacity} Kontenjan`
+            : `${course.capacity} Kontenjan`;
+
+          return (
+            <div key={course.id} className="cs-card">
+
+              {/* Top badges */}
+              <div className="cs-card-top">
+                <span className="cs-dept-badge">{course.department_name || 'Genel'}</span>
+                <div className="cs-meta">
+                  <span className="cs-ects">{course.ects} AKTS</span>
+                  <span className="cs-capacity">{capacityText}</span>
+                </div>
+              </div>
+
+              {/* Course info */}
+              <div>
+                <span className="cs-course-code">{course.course_id}</span>
+                <h3 className="cs-course-name">{course.sections[0]?.course_name || 'İsimsiz Ders'}</h3>
+                {course.sections[0]?.course_detail && (
+                  <p className="cs-course-desc" style={{ marginTop: 6 }}>
+                    {course.sections[0].course_detail}
+                  </p>
+                )}
+              </div>
+
+              {/* Section select */}
+              <div className="cs-select-wrap">
+                <p className="cs-select-label">Şube Seçiniz</p>
+                <select
+                  className="cs-select"
+                  value={selectedSections[course.id] || ''}
+                  onChange={(e) => handleSectionChange(course.id, e.target.value)}
+                >
+                  <option value="">Şube seçin...</option>
+                  {course.sections?.length > 0 ? (
+                    course.sections.map((sec) => (
+                      <option key={sec.id} value={sec.id}>
+                        {sec.instructor} — {sec.course_days} {sec.course_start_time.slice(0, 5)}–{sec.course_end_time.slice(0, 5)}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Şube bulunamadı</option>
+                  )}
+                </select>
+              </div>
+
+              {/* Enroll button */}
+              <button
+                className="cs-btn"
+                onClick={() => handleEnroll(course.id)}
+                disabled={enrollingId === course.id}
+              >
+                {enrollingId === course.id ? 'Kaydediliyor...' : 'Kayıt Ol'}
+              </button>
+
             </div>
-        </div>
-    );
+          );
+        })}
+      </div>
+
+    </div>
+  </>
+);
 };
 
 export default CourseSelection;
