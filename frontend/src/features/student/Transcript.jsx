@@ -10,7 +10,6 @@ const Transcript = () => {
     }).then(res => setData(res.data));
   }, []);
 
-  // Mevcut import, hook ve state'lerini bu dosyanın üstüne ekle.
 
 return (
   <>

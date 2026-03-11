@@ -50,7 +50,7 @@ const sidebarStyle = {
           <Link to="/InstructorDashboard" style={navItemStyle(isActive("/InstructorDashboard"))}> <i className="nav-link text-dark"></i>Ana Sayfa</Link>
                 </li>
             <li className="mb-2">
-              <Link to="/InstructorCourses" style={navItemStyle(isActive("/InstructorCourses"))}> <i className="nav-link text-dark"></i> Verdiğim Dersler</Link>
+              <Link to="/InstructorCourses" style={navItemStyle(isActive("/InstructorCourses"))}> <i className="nav-link text-dark"></i>Ders İşlemleri</Link>
             </li>
               <li className="mb-2">
               <Link to="/settings/" style={navItemStyle(isActive("/settings/"))}>

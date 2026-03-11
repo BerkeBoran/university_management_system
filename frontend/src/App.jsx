@@ -14,7 +14,7 @@ import Curriculum from "./features/student/Curriculum.jsx";
 import Layout from "./components/layout/Layout";
 import ForumPage from "./features/forum/ForumPage";
 import ForumHome from "./features/forum/ForumHome";
-
+import InstructorGradesPage from "./features/instructor/InstructorGradesPage.jsx"
 
 
 
@@ -36,6 +36,7 @@ function App() {
         <Route path="/InstructorCourses" element={<Layout><InstructorCoursesPage/></Layout>} />
         <Route path="/forum/:id" element={<Layout><ForumPage/></Layout>} />
         <Route path="/forum/" element={<Layout><ForumHome/></Layout>} />
+        <Route path="/InstructorCourses/:id/grades" element={<Layout><InstructorGradesPage/></Layout>} />
 
 
       </Routes>

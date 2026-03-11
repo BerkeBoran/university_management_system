@@ -164,20 +164,13 @@ const StudentDashboard = () => {
           <div className="sd-stats">
             <div className="sd-stat accent">
               <p className="sd-stat-label">Genel Not Ort.</p>
-              <p className="sd-stat-value">{studentData?.gpa || '0.00'}</p>
+              <p className="sd-stat-value">{studentData?.overall_gpa || '0.00'}</p>
               <p className="sd-stat-sub">GNO</p>
             </div>
             <div className="sd-stat">
               <p className="sd-stat-label">Kayıtlı Ders</p>
               <p className="sd-stat-value">{studentData?.courses?.length || 0}</p>
               <p className="sd-stat-sub">bu dönem</p>
-            </div>
-            <div className="sd-stat">
-              <p className="sd-stat-label">Toplam AKTS</p>
-              <p className="sd-stat-value">
-                {studentData?.courses?.reduce((s, c) => s + (c.ects || 0), 0) || 0}
-              </p>
-              <p className="sd-stat-sub">kredi</p>
             </div>
           </div>
 
