@@ -5,9 +5,14 @@ from apps.users.models import Instructor,Student
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     courses =EnrollCourseSerializer(source = 'enrollments',many=True, read_only=True)
+    overall_gpa = serializers.SerializerMethodField()
+
+    def get_overall_gpa(self, obj):
+        return obj.overall_gpa
+
     class Meta:
         model = Student
-        fields = ['id','username','first_name','last_name','gpa','grade','courses']
+        fields = ['id','username','first_name','last_name','grade','courses','overall_gpa']
 
 
 class InstructorProfileSerializer(serializers.ModelSerializer):

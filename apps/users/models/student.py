@@ -1,5 +1,6 @@
 from apps.courses.models.course import Course
 from apps.courses.models.section import Department, Grade, Section
+from apps.courses.models import Enrollment
 from .base import User
 from django.db import models
 from django.utils import timezone
@@ -45,3 +46,23 @@ class Student(User):
 
         super().save(*args, **kwargs)
 
+    @property
+    def overall_gpa(self):
+        enrollments = Enrollment.objects.filter(student=self).select_related("section")
+
+        total_points = 0
+        total_credits = 0
+
+        points_map = {"AA": 4.0, "BA": 3.5, "BB": 3.0, "BC": 2.5, "CC": 2.0, "CD": 1.5, "DD": 1.0, "FF": 0.0}
+
+        for enrollment in enrollments:
+            letter = enrollment.calculate_letter_grade()
+            if letter and letter in points_map:
+                credit = enrollment.section.course.credit
+                point = points_map[letter]
+                total_points += (point * credit)
+                total_credits += credit
+
+        if total_credits > 0:
+            return round(total_points / total_credits, 2)
+        return 0.0

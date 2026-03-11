@@ -16,10 +16,11 @@ class MyProfileView(generics.RetrieveAPIView):
         if hasattr(request.user, 'student'):
             student = Student.objects.get(id = request.user.id)
             serializer = StudentProfileSerializer(student)
+            return Response(serializer.data)
         if hasattr(request.user, 'instructor'):
             instructor = Instructor.objects.get(id = request.user.id)
             serializer = InstructorProfileSerializer(instructor)
-        return Response(serializer.data)
+            return Response(serializer.data)
 
 class ChangePasswordView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
