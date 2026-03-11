@@ -1,9 +1,10 @@
 from rest_framework import viewsets, status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from apps.courses.models.forum import Answer, Question
-from apps.courses.permission import IsTeacherOrQuestionAuthor, IsTeacherOrAnswerAuthorOrQuestionAuthor
+from apps.courses.permission import IsTeacherOrQuestionAuthor, IsTeacherOrAnswerAuthorOrQuestionAuthor,AnswerIsTeacherOrQuestionAuthor
 from apps.users.serializers.forum import AnswerSerializer, QuestionSerializer
 from apps.courses.models import Course
 from apps.users.serializers import CourseSerializer
@@ -61,7 +62,25 @@ class AnswerViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['update', 'partial_update','destroy']:
             return [IsTeacherOrAnswerAuthorOrQuestionAuthor()]
+        if self.action == 'accept':
+            return [AnswerIsTeacherOrQuestionAuthor()]
         return [IsAuthenticated()]
+
+
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def accept(self, request, pk=None):
+        answer = self.get_object()
+        question = answer.question
+
+
+        Answer.objects.filter(question=answer.question).update(is_accepted=False)
+        answer.is_accepted = True
+        answer.save()
+
+        question.is_resolved = True
+        question.save()
+        return Response({"Cevap Kabul edildi"}, status=status.HTTP_200_OK)
 
 class ForumCourseListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

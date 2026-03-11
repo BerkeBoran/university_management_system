@@ -20,6 +20,23 @@ class IsTeacherOrQuestionAuthor(permissions.BasePermission):
 
         return is_course_teacher or is_question_author
 
+class AnswerIsTeacherOrQuestionAuthor(permissions.BasePermission):
+    def hasattr_instructor(self, user):
+        return hasattr(user, 'instructor')
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        is_question_author = obj.question.author == request.user
+
+        is_course_teacher = False
+
+        if self.hasattr_instructor(request.user):
+            is_course_teacher = obj.question.course.sections.filter(instructor=request.user).exists()
+
+        return is_course_teacher or is_question_author
+
 class IsTeacherOrAnswerAuthorOrQuestionAuthor(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
             if request.method in permissions.SAFE_METHODS:

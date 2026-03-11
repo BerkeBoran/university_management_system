@@ -2,12 +2,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.courses.views import AvaliableCoursesView,VisualCalendarView,AnswerViewSet,QuestionViewSet
+from apps.courses.views import AvaliableCoursesView,VisualCalendarView
 from apps.courses.views.scheduler import CourseDeleteView, SectionListView, InstructorCourseListView,InstructorCourseViewSet
 from apps.courses.views.academic_management import ClassroomViewSet,CourseTimeViewSet,SemesterViewSet,GradeViewSet, DepartmentViewSet
 from apps.courses.views.enrollment_grade import EnrollmentGradeView, StudentGradeView
 from apps.courses.views.curriculum import StudentCurriculumView
-from apps.courses.views.forum import ForumCourseListView
+from apps.courses.views.forum import ForumCourseListView,AnswerViewSet,QuestionViewSet
 
 
 router = DefaultRouter()
