@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import axios from "axios";
 
 const AnswerItem = ({ answer, questionAuthorId,refresh }) => {
     const currentUserId = localStorage.getItem("user_id")
     const userRole = localStorage.getItem("user_role")
+    const [upvotesCount, setUpvotesCount] = useState(answer.upvotes_count || 0);
 
     console.log("Kullanıcı Rolü:", userRole, "Soru Sahibi ID:", questionAuthorId, "Cevap Sahibi ID:", answer.author);
 
@@ -39,9 +40,32 @@ const AnswerItem = ({ answer, questionAuthorId,refresh }) => {
     }
   };
 
+  const handleUpvote = async () =>{
+      try{
+          const token = localStorage.getItem("access")
+          const response = await axios.post(`http://localhost:8000/api/courses/answers/${answer.id}/upvote/`, {},{
+              headers: {Authorization: `Bearer ${token}`}
+          });
+          setUpvotesCount(response.data.upvotes_count);
+      }catch (err){
+          console.error("Hata detayı:", err.response?.data);
+          alert("Cevap beğenilirken bir hata oluştu.");
+      }
+  }
+
   return (
       <div className="p-2 border-bottom d-flex justify-content-between">
           <div>
+              <div className="d-flex flex-column align-items-center">
+        <button
+          onClick={handleUpvote}
+          className="btn btn-outline-secondary border-0 d-flex flex-column align-items-center"
+          title="Beğen"
+        >
+          <i className={`bi bi-caret-up-fill fs-4 ${upvotesCount > 0 ? 'text-primary' : ''}`}></i>
+          <span className="fw-bold">{upvotesCount}</span>
+        </button>
+      </div>
         {answer.is_accepted && (
           <span className="badge bg-success mb-2">
             <i className="bi bi-patch-check-fill me-1"></i> Çözüm Olarak İşaretlendi
