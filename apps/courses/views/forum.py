@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework import viewsets, status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -67,6 +68,23 @@ class AnswerViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
 
+    @action(detail = True, methods = ['post'], permission_classes = [IsAuthenticated])
+    def upvote(self, request, pk=None):
+        answer = self.get_object()
+        user = request.user
+
+        if answer.liked_by.filter(id = user.id).exists():
+            answer.liked_by.remove(user)
+            message = "Beğeni geri çekildi"
+            status_code = status.HTTP_200_OK
+
+        else:
+            answer.liked_by.add(user)
+            message= "Beğenildi"
+            status_code=status.HTTP_201_CREATED
+
+        current_count = answer.liked_by.count()
+        return Response({"message": message, "upvotes_count": int(current_count) }, status=status_code)
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def accept(self, request, pk=None):

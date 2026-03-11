@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.db import models
 from django.conf import settings
 from apps.courses.models import Course
+from apps.users.models import User
 
 
 class Question(models.Model):
@@ -44,6 +45,11 @@ class Answer(models.Model):
     is_accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    liked_by = models.ManyToManyField(User, related_name='liked_answers',blank=True)
+
+    @property
+    def upvotes_count(self):
+        return self.liked_by.count()
 
     def delete(self):
         self.is_deleted = True

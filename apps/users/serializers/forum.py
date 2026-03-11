@@ -4,11 +4,12 @@ from apps.courses.models.forum import Answer,Question
 
 class AnswerSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
+    upvotes_count = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Answer
-        fields = ['id','question','created_at','updated_at','author_name','upvotes','author','is_accepted','answer_text',]
+        fields = ['id','question','created_at','updated_at','author_name','upvotes','author','is_accepted','answer_text','upvotes_count']
         read_only_fields = ['author_name','upvotes','is_accepted','author']
 
     def get_author_name(self, obj):
@@ -18,6 +19,9 @@ class AnswerSerializer(serializers.ModelSerializer):
             return f"{first} {last}".strip()
 
         return obj.author.full_name
+
+    def get_upvotes_count(self, obj):
+        return obj.liked_by.count()
 
 class QuestionSerializer(serializers.ModelSerializer):
     answer = AnswerSerializer(many=True, read_only=True)
