@@ -27,15 +27,19 @@ const InstructorGradesPage = () => {
       .get(`http://localhost:8000/api/courses/enrollment-grade/?course_id=${courseId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access')}` },
       })
+
       .then((res) => {
         setEnrollments(res.data);
         const initial = {};
         res.data.forEach((e) => {
           initial[e.student_id] = e[selectedExam.field] ?? '';
         });
+
         setGrades(initial);
         if (res.data[0]) setCourseName(res.data[0].course_name || '');
+
       })
+
       .finally(() => setLoading(false));
   }, [selectedExam, courseId]);
 
@@ -50,11 +54,44 @@ const InstructorGradesPage = () => {
     }
   };
 
+  const hasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj || {}, prop);
+
+  const getExamOpen = (enrollment, examKey) => {
+    if (examKey === 'midterm') {
+      if (hasProp(enrollment, 'is_active_midterm_enroll_grade')) return enrollment.is_active_midterm_enroll_grade;
+      if (hasProp(enrollment, 'is_active_midterm_grade')) return enrollment.is_active_midterm_grade;
+      if (hasProp(enrollment, 'is_active_enroll_grade')) return enrollment.is_active_enroll_grade;
+      return true;
+    }
+    if (examKey === 'final') {
+      if (hasProp(enrollment, 'is_active_final_enroll_grade')) return enrollment.is_active_final_enroll_grade;
+      if (hasProp(enrollment, 'is_active_final_grade')) return enrollment.is_active_final_grade;
+      if (hasProp(enrollment, 'is_active_enroll_grade')) return enrollment.is_active_enroll_grade;
+      return true;
+    }
+    if (examKey === 'makeup') {
+      if (hasProp(enrollment, 'is_active_makeup_enroll_grade')) return enrollment.is_active_makeup_enroll_grade;
+      if (hasProp(enrollment, 'is_active_makeup_grade_open')) return enrollment.is_active_makeup_grade_open;
+      return true;
+    }
+    return true;
+  };
+
+  const canEnterGrade = (enrollment) => {
+    if (!selectedExam) return false;
+    const isExamOpen = getExamOpen(enrollment, selectedExam.key);
+    if (!isExamOpen) return false;
+    if (selectedExam.key === 'makeup' && !enrollment.is_active_makeup_grade) return false;
+    return true;
+  };
+
   const handleSave = async () => {
     setSaving(true);
     setSaveStatus(null);
     try {
-      const requests = enrollments.map((enrollment) =>
+      const requests = enrollments
+        .filter((enrollment) => canEnterGrade(enrollment))
+        .map((enrollment) =>
         axios.patch(
           `http://localhost:8000/api/courses/enrollment-grade/`,
           {
@@ -142,6 +179,8 @@ const InstructorGradesPage = () => {
                   const changed =
                     grades[enrollment.student_id] !== '' &&
                     Number(grades[enrollment.student_id]) !== Number(current);
+                  const isExamOpen = getExamOpen(enrollment, selectedExam.key);
+                  const isMakeupEligible = enrollment.is_active_makeup_grade;
                   return (
                     <tr
                       key={enrollment.student_id}
@@ -163,7 +202,7 @@ const InstructorGradesPage = () => {
                         )}
                       </td>
                       <td style={styles.td}>
-                        {selectedExam.key === 'makeup' && !enrollment.is_active_makeup_grade ? (
+                        {!isExamOpen ? (
                           <span style={{
                             fontSize: 12, fontWeight: 600,
                             color: '#94a3b8',
@@ -172,7 +211,20 @@ const InstructorGradesPage = () => {
                             padding: '4px 12px',
                             borderRadius: 8,
                           }}>
-                            Hak Yok
+                            {selectedExam.key === 'midterm' && 'Vize Girişleri Kapalı'}
+                            {selectedExam.key === 'final' && 'Final Girişleri Kapalı'}
+                            {selectedExam.key === 'makeup' && 'Bütünleme Girişleri Kapalı'}
+                          </span>
+                        ) : selectedExam.key === 'makeup' && !isMakeupEligible ? (
+                          <span style={{
+                            fontSize: 12, fontWeight: 600,
+                            color: '#94a3b8',
+                            background: '#f1f5f9',
+                            border: '1px solid #e2e8f0',
+                            padding: '4px 12px',
+                            borderRadius: 8,
+                          }}>
+                            Bütünleme Hakkı Yok
                           </span>
                         ) : (
                           <input
