@@ -14,8 +14,7 @@ class Command(BaseCommand):
         days = options['days']
         start_date = timezone.now()
         end_date = start_date + timedelta(days=days)
-
-        settings, created = SystemSettings.objects.get_or_create(id=1)
+        settings = SystemSettings.get_settings()
 
         settings.is_enrollment_open = True
         settings.enrollment_start_date = start_date
