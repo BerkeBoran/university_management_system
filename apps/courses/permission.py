@@ -16,7 +16,7 @@ class IsTeacherOrQuestionAuthor(permissions.BasePermission):
         is_course_teacher = False
 
         if self.hasattr_instructor(request.user):
-            is_course_teacher = obj.question.course.instructor == request.user
+            is_course_teacher = obj.course.sections.filter(instructor=request.user).exists()
 
         return is_course_teacher or is_question_author
 
