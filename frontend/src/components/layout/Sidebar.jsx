@@ -60,6 +60,10 @@ const sidebarStyle = {
               <Link to="/forum/" style={navItemStyle(isActive("/forum/"))}>
               <i className="bi bi-file-earmark-text-fill"></i>Forum</Link>
             </li>
+                <li className="mb-2">
+              <Link to="/InstructorCalendar/" style={navItemStyle(isActive("/InstructorCalendar/"))}>
+              <i className="bi bi-file-earmark-text-fill"></i>Ders Programı</Link>
+            </li>
           </>
         )}
 
