@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 const CourseSelection = () => {
@@ -25,6 +25,22 @@ const CourseSelection = () => {
         };
         fetchCourses();
     }, [token]);
+
+    const visibleCourses = useMemo(() => {
+        const map = new Map();
+        courses.forEach((course, index) => {
+            const key =
+                course.course_id ??
+                course.id ??
+                course.sections?.[0]?.course_name ??
+                course.course_name ??
+                `__idx_${index}`;
+            if (!map.has(key)) {
+                map.set(key, course);
+            }
+        });
+        return Array.from(map.values());
+    }, [courses]);
 
     const handleSectionChange = async (courseId, sectionId) =>{
         setSelectedSections(prev => ({...prev,[courseId]: sectionId}));
@@ -187,7 +203,7 @@ return (
       {/* Header */}
       <div className="cs-header">
         <h1 className="cs-title">Ders Seçimi</h1>
-        <p className="cs-subtitle">{courses.length} ders mevcut</p>
+        <p className="cs-subtitle">{visibleCourses.length} ders mevcut</p>
       </div>
 
       {/* Error */}
@@ -195,7 +211,7 @@ return (
 
       {/* Grid */}
       <div className="cs-grid">
-        {courses.map((course) => {
+        {visibleCourses.map((course) => {
           const selectedSec = course.sections?.find(
             (s) => s.id.toString() === (selectedSections[course.id] || '').toString()
           );
