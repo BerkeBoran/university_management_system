@@ -162,7 +162,17 @@ return (
 
               <div className="cal-day-body">
                 {calendarData[day].length > 0 ? (
-                  calendarData[day].map((course, i) => (
+                  (() => {
+                    const seen = new Set();
+                    const uniqueCourses = calendarData[day].filter((course) => {
+                      const key =
+                        course.course_id ??
+                        `${course.course_name || ''}|${course.course_start_time || ''}|${course.course_end_time || ''}|${course.classroom || ''}`;
+                      if (seen.has(key)) return false;
+                      seen.add(key);
+                      return true;
+                    });
+                    return uniqueCourses.map((course, i) => (
                     <div
                       key={i}
                       className="cal-slot"
@@ -180,7 +190,8 @@ return (
                         {course.classroom}
                       </span>
                     </div>
-                  ))
+                    ));
+                  })()
                 ) : (
                   <p className="cal-empty">Ders yok</p>
                 )}
