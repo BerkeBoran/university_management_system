@@ -30,9 +30,21 @@ class SectionSerializer(serializers.ModelSerializer):
     course_days = serializers.CharField(source='course_time.course_days', read_only=True)
     course_start_time = serializers.CharField(source='course_time.course_start_time', read_only=True)
     course_end_time = serializers.CharField(source='course_time.course_end_time', read_only=True)
+    instructor_name = serializers.SerializerMethodField(read_only=True)
+    instructor_title = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Section
-        fields = ['id','department_name','semester','credit','grade','course_name','course_id','instructor','course_days','course_start_time','course_end_time','remaining_capacity']
+        fields = ['id','department_name','semester','credit','grade','course_name','course_id','instructor','course_days','course_start_time','course_end_time','remaining_capacity','instructor_name','instructor_title']
+
+    def get_instructor_name(self, obj):
+        if obj.instructor:
+            return f"{obj.instructor.first_name} {obj.instructor.last_name}"
+        return None
+
+    def get_instructor_title(self, obj):
+        if obj.instructor:
+            return  f"{obj.instructor.instructor.title}"
+        return None
 
 class CourseSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True, read_only=True)

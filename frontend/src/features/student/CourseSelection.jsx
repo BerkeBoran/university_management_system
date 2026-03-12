@@ -16,7 +16,6 @@ const CourseSelection = () => {
                 const response = await axios.get('http://localhost:8000/api/courses/course-list', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                console.log("Gelen Veri:", response.data); // Buraya bak!
                 setCourses(response.data);
                 setLoading(false);
             } catch (err) {
@@ -239,7 +238,7 @@ return (
                   {course.sections?.length > 0 ? (
                     course.sections.map((sec) => (
                       <option key={sec.id} value={sec.id}>
-                        {sec.instructor} — {sec.course_days} {sec.course_start_time.slice(0, 5)}–{sec.course_end_time.slice(0, 5)}
+                          {sec.instructor_title}.{sec.instructor_name} — {sec.course_days} {sec.course_start_time.slice(0, 5)}–{sec.course_end_time.slice(0, 5)}
                       </option>
                     ))
                   ) : (

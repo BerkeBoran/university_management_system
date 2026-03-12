@@ -57,7 +57,7 @@ class Answer(models.Model):
         self.save()
 
     class Meta:
-        ordering = ['-is_accepted','-upvotes','-created_at']
+        ordering = ['-is_accepted','-upvotes']
 
     def __str__(self):
         author_name = f"{self.author.first_name} {self.author.last_name}"
