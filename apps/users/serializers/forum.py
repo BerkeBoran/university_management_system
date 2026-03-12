@@ -4,13 +4,14 @@ from apps.courses.models.forum import Answer,Question
 
 class AnswerSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
+    author_title = serializers.SerializerMethodField()
     upvotes_count = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Answer
-        fields = ['id','question','created_at','updated_at','author_name','upvotes','author','is_accepted','answer_text','upvotes_count']
-        read_only_fields = ['author_name','upvotes','is_accepted','author']
+        fields = ['id','question','created_at','updated_at','author_name','author_title','upvotes','author','is_accepted','answer_text','upvotes_count']
+        read_only_fields = ['author_name','author_title','upvotes','is_accepted','author']
 
     def get_author_name(self, obj):
         first = obj.author.first_name
@@ -19,6 +20,12 @@ class AnswerSerializer(serializers.ModelSerializer):
             return f"{first} {last}".strip()
 
         return obj.author.full_name
+
+    def get_author_title(self, obj):
+        instructor = getattr(obj.author, "instructor", None)
+        if instructor:
+            return instructor.get_title_display()
+        return None
 
     def get_upvotes_count(self, obj):
         return obj.liked_by.count()
@@ -47,4 +54,3 @@ class QuestionSerializer(serializers.ModelSerializer):
             question.is_resolved = True
             question.save()
         return attrs
-

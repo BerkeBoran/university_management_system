@@ -5,9 +5,6 @@ const AnswerItem = ({ answer, questionAuthorId,refresh }) => {
     const currentUserId = localStorage.getItem("user_id")
     const userRole = localStorage.getItem("user_role")
     const [upvotesCount, setUpvotesCount] = useState(answer.upvotes_count || 0);
-
-    console.log("Kullanıcı Rolü:", userRole, "Soru Sahibi ID:", questionAuthorId, "Cevap Sahibi ID:", answer.author);
-
     const canDelete = userRole === 'instructor' || answer.author == currentUserId || questionAuthorId == currentUserId;
 
 
@@ -194,7 +191,7 @@ return (
         {/* Footer */}
         <div className="ans-footer">
           <span className="ans-author">
-            Yazar: <strong>{answer.author_name}</strong>
+            Yazar: <strong>{answer.author_title} {answer.author_name}</strong>
           </span>
 
           {canDelete && (

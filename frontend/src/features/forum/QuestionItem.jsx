@@ -32,7 +32,7 @@ const QuestionItem = ({ question, refresh }) => {
     fetchAnswers();
   }, []);
 
-          const handleDelete = async () => {
+  const handleDelete = async () => {
       if (!window.confirm("Bu soruyu silmek istediğinizden emin misiniz?")) return;
 
       try {

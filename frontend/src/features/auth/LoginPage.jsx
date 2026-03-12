@@ -28,6 +28,7 @@ const LoginPage = () => {
     localStorage.setItem("user_role", role);
     localStorage.setItem("full_name", response.data.full_name);
     localStorage.setItem("user_id", response.data.user_id)
+    localStorage.setItem("title", response.data.title)
 
     alert("Giriş Başarılı!");
 
