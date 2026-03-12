@@ -96,12 +96,24 @@ class VisualCalendarView(APIView):
 
         if hasattr(user, 'instructor'):
             instructor = user.instructor
-            courses = Course.objects.filter(sections__department__department = instructor.department)
+            courses = Course.objects.filter(sections__instructor = instructor)
+            enrollments = Enrollment.objects.filter(section__instructor = instructor).select_related(
+                "section__course",
+                "section__course_time",
+                "section__classroom",
+                "section__instructor",
+            )
 
 
         if hasattr(user, 'student'):
             student = user.student
             courses = Course.objects.filter(sections__department__department = student.department)
+            enrollments = Enrollment.objects.filter(student=student).select_related(
+                "section__course",
+                "section__course_time",
+                "section__classroom",
+                "section__instructor",
+            )
 
 
 
@@ -113,14 +125,7 @@ class VisualCalendarView(APIView):
             "Friday": [],
         }
 
-        enrollments = Enrollment.objects.filter(student = student).select_related(
-            "section__course",
-            "section__course_time",
-            "section__classroom",
-            "section__instructor",
 
-
-        )
         for enrollment in enrollments:
             section = enrollment.section
             course = section.course
