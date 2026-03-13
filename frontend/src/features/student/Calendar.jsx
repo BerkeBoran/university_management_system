@@ -35,14 +35,20 @@ if (!calendarData) return (
   </div>
 );
 
+const DAY_LABELS = {
+  Monday: "Pazartesi",
+  Tuesday: "Salı",
+  Wednesday: "Çarşamba",
+  Thursday: "Perşembe",
+  Friday: "Cuma",
+};
+
 const DAY_COLORS = {
   Pazartesi: { bg: '#eff6ff', border: '#bfdbfe', dot: '#3b82f6' },
-  Salı:      { bg: '#f0fdf4', border: '#bbf7d0', dot: '#22c55e' },
-  Çarşamba:  { bg: '#fdf4ff', border: '#e9d5ff', dot: '#a855f7' },
-  Perşembe:  { bg: '#fff7ed', border: '#fed7aa', dot: '#f97316' },
-  Cuma:      { bg: '#fef2f2', border: '#fecaca', dot: '#ef4444' },
-  Cumartesi: { bg: '#f8fafc', border: '#e2e8f0', dot: '#64748b' },
-  Pazar:     { bg: '#f8fafc', border: '#e2e8f0', dot: '#64748b' },
+  Salı:      { bg: '#eff6ff', border: '#bfdbfe', dot: '#3b82f6' },
+  Çarşamba:  { bg: '#eff6ff', border: '#bfdbfe', dot: '#3b82f6' },
+  Perşembe:  { bg: '#eff6ff', border: '#bfdbfe', dot: '#3b82f6' },
+  Cuma:      { bg: '#eff6ff', border: '#bfdbfe', dot: '#3b82f6' },
 };
 
 return (
@@ -150,14 +156,15 @@ return (
 
       <div className="cal-grid">
         {Object.keys(calendarData).map((day) => {
-          const colors = DAY_COLORS[day] || DAY_COLORS['Cumartesi'];
+          const displayDay = DAY_LABELS[day] || day;
+          const colors = DAY_COLORS[displayDay] || DAY_COLORS['Cumartesi'];
           return (
             <div key={day} className="cal-day">
 
               {/* Day heading */}
               <div className="cal-day-head" style={{ background: colors.bg, color: '#1e293b' }}>
                 <span className="cal-day-dot" style={{ background: colors.dot }} />
-                {day}
+                {displayDay}
               </div>
 
               <div className="cal-day-body">

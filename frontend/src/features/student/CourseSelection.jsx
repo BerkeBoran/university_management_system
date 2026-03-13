@@ -224,7 +224,7 @@ return (
 
               {/* Top badges */}
               <div className="cs-card-top">
-                <span className="cs-dept-badge">{course.department_name || 'Genel'}</span>
+                <span className="cs-course-code">{course.course_id}</span>
                 <div className="cs-meta">
                   <span className="cs-ects">{course.ects} AKTS</span>
                   <span className="cs-capacity">{capacityText}</span>
@@ -233,7 +233,6 @@ return (
 
               {/* Course info */}
               <div>
-                <span className="cs-course-code">{course.course_id}</span>
                 <h3 className="cs-course-name">{course.sections[0]?.course_name || 'İsimsiz Ders'}</h3>
                 {course.sections[0]?.course_detail && (
                   <p className="cs-course-desc" style={{ marginTop: 6 }}>
