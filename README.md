@@ -2,8 +2,6 @@
 
 Üniversite yönetimi için Django REST API ve React tabanlı bir uygulama. Backend tarafında kullanıcı/rol yönetimi, ders ve şube planlama, kayıt ve notlandırma; frontend tarafında ise Vite + React arayüzü bulunur.
 
-![Ana Sayfa](docs/screenshots/dashboard.png)
-
 ## Öne Çıkanlar
 - Rol tabanlı kullanıcı modeli (Admin, Instructor, Student)
 - Ders kataloğu ve ön koşul ilişkileri
