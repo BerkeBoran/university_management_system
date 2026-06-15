@@ -1,64 +1,104 @@
-# University Management System
+<div align="center">
 
-Üniversite yönetimi için Django REST API ve React tabanlı bir uygulama. Backend tarafında kullanıcı/rol yönetimi, ders ve şube planlama, kayıt ve notlandırma; frontend tarafında ise Vite + React arayüzü bulunur.
+# 🎓 University Management System
 
-## Öne Çıkanlar
-- Rol tabanlı kullanıcı modeli (Admin, Instructor, Student)
-- Ders kataloğu ve ön koşul ilişkileri
-- Bölüm, sınıf, dönem, ders saati ve sınıf (classroom) yönetimi
-- Şube (section) açma, kapasite ve çakışma kontrolü
-- Öğrenci ders kaydı (enrollment) ve notlandırma (AA-FF)
-- Ders forumu: soru/cevap, kabul edilen cevap, beğeni
+**A role-based university platform — Django REST API + React.**
 
-## Teknoloji Yığını
-- Backend: Django 4.2 + Django REST Framework
-- Auth: JWT (SimpleJWT)
-- Veritabanı: PostgreSQL
-- Frontend: React + Vite + Tailwind
+Course planning, enrollment, grading and a course discussion forum, with separate experiences for admins, instructors and students.
 
-## Mimari ve Veri Modeli (Özet)
-- Custom user modeli `AbstractBaseUser` + `PermissionsMixin` ile tanımlıdır.
-- Course & Prerequisites: self-referencing Many-to-Many.
-- Enrollment: Student, Section ve notlandırmayı birleştirir.
-- Forum: User, Question, Answer ilişkisi.
+![Backend](https://img.shields.io/badge/Backend-Django%204.2%20%7C%20DRF-092E20?style=flat-square&logo=django&logoColor=white)
+![Auth](https://img.shields.io/badge/Auth-JWT%20(SimpleJWT)-A30000?style=flat-square)
+![DB](https://img.shields.io/badge/DB-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Frontend](https://img.shields.io/badge/Frontend-React%20%7C%20Vite%20%7C%20Tailwind-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white)
 
-## Ekran Görüntüleri
+</div>
 
-**Student Features**
-![Dashboard](docs/screenshots/dashboard.png)
+> Built during my backend internship at **TechNarts** to practice domain modeling, role-based access and REST API design on a non-trivial schema.
 
-**Instructor Features**
-![Akademisyen Ders Listesi](docs/screenshots/enrollment.png)
-![Not Girişi](docs/screenshots/grades.png)
+---
 
-**Forum Features**
-![Forum Soru-Cevap Ekranı](docs/screenshots/forum.png)
+## ✨ Features
 
-## Kurulum (Docker ile hızlı başlangıç)
-1. `docker compose up --build`
-2. `docker compose run --rm web python manage.py migrate`
-3. `docker compose run --rm web python manage.py createsuperuser`
-4. Backend: `http://localhost:8000`
-5. Frontend: `http://localhost:5173`
+| Area | Details |
+| --- | --- |
+| 👥 **Role-based access** | Custom user model with three roles — **Admin**, **Instructor**, **Student** — each with its own permissions and UI. |
+| 📚 **Course catalog** | Courses with **prerequisite** relationships (self-referencing many-to-many). |
+| 🏛️ **Academic structure** | Departments, classes, semesters, class hours and classrooms. |
+| 🗂️ **Sections** | Open sections with **capacity** limits and **scheduling-conflict** checks. |
+| 📝 **Enrollment & grading** | Students enroll in sections; instructors assign grades on an **AA–FF** scale. |
+| 💬 **Course forum** | Q&A per course with accepted answers and upvotes. |
 
-Varsayılan veritabanı bilgileri `docker-compose.yml` içinde geliştirme amaçlı olarak tanımlıdır.
+---
 
-## Lokal geliştirme
+## 🧱 Architecture & data model
+
+- **Custom user model** built on `AbstractBaseUser` + `PermissionsMixin` for full control over auth and roles.
+- **Course ↔ Prerequisites** — self-referencing many-to-many.
+- **Enrollment** — join model linking `Student`, `Section` and grade.
+- **Forum** — `User` → `Question` → `Answer` with accepted-answer and voting logic.
+
+**Stack:** Django 4.2 · Django REST Framework · SimpleJWT · PostgreSQL · React · Vite · Tailwind CSS
+
+---
+
+## 📸 Screenshots
+
+| Student dashboard | Instructor — course list |
+| --- | --- |
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Course list](docs/screenshots/enrollment.png) |
+
+| Instructor — grade entry | Course forum |
+| --- | --- |
+| ![Grades](docs/screenshots/grades.png) | ![Forum](docs/screenshots/forum.png) |
+
+---
+
+## 🚀 Getting started
+
+### Docker (quick start)
+
+```bash
+docker compose up --build
+docker compose run --rm web python manage.py migrate
+docker compose run --rm web python manage.py createsuperuser
+```
+
+- Backend → `http://localhost:8000`
+- Frontend → `http://localhost:5173`
+
+Development database credentials are defined in `docker-compose.yml`.
+
+### Local development
 
 **Backend**
-1. `python -m venv .venv`
-2. `.venv` aktivasyonu (shell'e göre)
-3. `pip install -r requirements.txt`
-4. PostgreSQL ayarlarını `core/settings.py` içinde güncelle
-5. `python manage.py migrate`
-6. `python manage.py runserver`
+
+```bash
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+# update PostgreSQL settings in core/settings.py
+python manage.py migrate
+python manage.py runserver
+```
 
 **Frontend**
-1. `cd frontend`
-2. `npm install`
-3. `npm run dev`
-4. Frontend: `http://localhost:5173`
 
-## Notlar
-- CORS izinleri `core/settings.py` içinde `5173` ve `3000` için açık.
-- Student ve Instructor kayıtları oluşturulurken geçici kullanıcı adı/şifre konsola yazdırılır.
+```bash
+cd frontend
+npm install
+npm run dev                         # http://localhost:5173
+```
+
+---
+
+## 📝 Notes
+
+- CORS is enabled for `5173` and `3000` in `core/settings.py`.
+- When a Student or Instructor account is created, a temporary username/password is printed to the console.
+
+---
+
+<div align="center">
+<sub>Built by <a href="https://github.com/BerkeBoran">Berke Boran</a> · <a href="https://www.linkedin.com/in/berke-boran-a7a140280/">LinkedIn</a></sub>
+</div>
