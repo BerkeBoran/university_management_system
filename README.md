@@ -100,5 +100,5 @@ npm run dev                         # http://localhost:5173
 ---
 
 <div align="center">
-<sub>Built by <a href="https://github.com/BerkeBoran">Berke Boran</a> · <a href="https://www.linkedin.com/in/berke-boran-a7a140280/">LinkedIn</a></sub>
+<sub>Built by <a href="https://github.com/BerkeBoran">Berke Boran</a> · <a href="https://www.linkedin.com/in/berke-boran-b25496355/">LinkedIn</a></sub>
 </div>
